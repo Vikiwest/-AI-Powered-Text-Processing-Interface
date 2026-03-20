@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
-    <title>LinguaFlow Pro · 37+ Languages</title>
+    <title>LinguaFlow Pro · 37+ Languages · Hover Gradient</title>
     <!-- website icon -->
     <link
       rel="icon"
@@ -30,16 +30,71 @@
         padding: 0;
         box-sizing: border-box;
       }
+
+      /* ========== HOVER GRADIENT ANIMATION BACKGROUND ========== */
       body {
         font-family: "Inter", sans-serif;
-        background: linear-gradient(
-          135deg,
-          #1e1a4b 0%,
-          #2e1e5e 50%,
-          #4c1d6e 100%
-        );
-        background-attachment: fixed;
+        /* Base background will be overridden by canvas, but we set a fallback */
+        background: #0a0718;
+        position: relative;
+        overflow-x: hidden;
       }
+
+      /* Animated gradient canvas that follows cursor / creates smooth organic motion */
+      #gradient-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -2;
+        display: block;
+        pointer-events: none; /* allows interaction with app content */
+        will-change: transform;
+      }
+
+      /* Secondary animated gradient overlay for depth + shimmer */
+      .bg-glow-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 100%);
+        pointer-events: none;
+      }
+
+      /* subtle noise texture for depth */
+      .noise-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        opacity: 0.08;
+        pointer-events: none;
+        background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjciIG51bU9jdGF2ZXM9IjMiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjZikiIG9wYWNpdHk9IjAuNCIvPjwvc3ZnPg==');
+        background-repeat: repeat;
+      }
+
+      /* Main app card is now slightly more transparent to let gradient shine */
+      .glass-card {
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        transition: all 0.3s ease;
+        box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35);
+      }
+
+      /* Enhance message bubbles with subtle glassmorph */
+      .message-bubble {
+        word-break: break-word;
+        white-space: pre-wrap;
+        transition: transform 0.1s ease;
+      }
+
       #chat-area {
         scroll-behavior: smooth;
         height: calc(100% - 130px);
@@ -102,11 +157,6 @@
         font-size: 0.95rem;
       }
 
-      .message-bubble {
-        word-break: break-word;
-        white-space: pre-wrap;
-      }
-
       @media (max-width: 640px) {
         .message-bubble {
           max-width: 90% !important;
@@ -123,22 +173,35 @@
         -webkit-tap-highlight-color: transparent;
       }
 
-      /* Detection confidence bar */
       .confidence-bar {
         height: 4px;
         background: linear-gradient(90deg, #10b981, #3b82f6);
         border-radius: 2px;
         transition: width 0.3s ease;
       }
+
+      /* custom hover animation for cards */
+      .action-card {
+        transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      }
+      .action-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 20px -12px rgba(79, 70, 229, 0.3);
+      }
     </style>
   </head>
-  <body class="h-screen flex flex-col justify-center items-center p-3 sm:p-4">
+  <body class="h-screen flex flex-col justify-center items-center p-3 sm:p-4 relative">
+    <!-- HOVER GRADIENT ANIMATION CANVAS -->
+    <canvas id="gradient-canvas"></canvas>
+    <div class="bg-glow-overlay"></div>
+    <div class="noise-overlay"></div>
+
     <div
-      class="max-w-5xl w-full h-[95vh] sm:h-[90vh] flex flex-col bg-white/98 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/30 overflow-hidden transition-all duration-300"
+      class="max-w-5xl w-full h-[95vh] sm:h-[90vh] flex flex-col glass-card rounded-2xl shadow-2xl overflow-hidden transition-all duration-300"
     >
       <!-- Header -->
       <div
-        class="bg-gradient-to-r from-indigo-700 to-purple-700 p-4 sm:p-5 text-white font-semibold shadow-md flex flex-wrap justify-between items-center gap-3 px-4 sm:px-6"
+        class="bg-gradient-to-r from-indigo-700/90 to-purple-700/90 backdrop-blur-sm p-4 sm:p-5 text-white font-semibold shadow-md flex flex-wrap justify-between items-center gap-3 px-4 sm:px-6"
       >
         <div class="flex items-center gap-2 sm:gap-3">
           <i class="fa-solid fa-language text-xl sm:text-2xl"></i>
@@ -154,14 +217,14 @@
           </span>
           <span
             class="text-[11px] sm:text-xs bg-white/30 px-2 sm:px-3 py-1.5 rounded-full"
-            >v3.1</span
+            >v3.2 · Hover Flow</span
           >
         </div>
       </div>
 
       <!-- Language Stats Bar -->
       <div
-        class="bg-indigo-50/90 px-4 sm:px-6 py-2 border-b border-indigo-100 flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm"
+        class="bg-indigo-50/80 backdrop-blur-sm px-4 sm:px-6 py-2 border-b border-indigo-100 flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm"
       >
         <i class="fa-solid fa-magic text-indigo-500 text-xs sm:text-sm"></i>
         <span class="text-indigo-700 font-medium">Auto-detects:</span>
@@ -204,7 +267,7 @@
       <!-- Chat Area -->
       <div
         id="chat-area"
-        class="flex-1 p-3 sm:p-5 overflow-y-auto space-y-3 sm:space-y-4 bg-gray-50/90"
+        class="flex-1 p-3 sm:p-5 overflow-y-auto space-y-3 sm:space-y-4 bg-gray-50/60 backdrop-blur-sm"
       ></div>
 
       <!-- Error Message Area -->
@@ -217,12 +280,12 @@
       </div>
 
       <!-- Input Area -->
-      <div class="p-3 sm:p-5 bg-white border-t border-gray-200 space-y-3">
+      <div class="p-3 sm:p-5 bg-white/90 backdrop-blur-sm border-t border-gray-200/70 space-y-3">
         <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <div class="flex-1 relative">
             <textarea
               id="input-text"
-              class="w-full p-3 sm:p-4 pr-10 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 transition-all resize-none text-sm sm:text-base placeholder:text-xs sm:placeholder:text-base"
+              class="w-full p-3 sm:p-4 pr-10 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 transition-all resize-none text-sm sm:text-base placeholder:text-xs sm:placeholder:text-base bg-white/90"
               rows="1"
               placeholder="Type or paste text in ANY language... (Enter to send)"
             ></textarea>
@@ -268,6 +331,132 @@
     </div>
 
     <script>
+      // ======================= HOVER GRADIENT ANIMATION (Canvas, Mouse-reactive) =======================
+      (function() {
+        const canvas = document.getElementById('gradient-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        
+        // Mouse / hover coordinates (relative to viewport)
+        let mouseX = width / 2;
+        let mouseY = height / 2;
+        let targetX = mouseX;
+        let targetY = mouseY;
+        
+        // Animation time for organic flow
+        let time = 0;
+        
+        // Color palette: vibrant gradients that shift with mouse & time
+        const colorStops = [
+          { r: 79, g: 70, b: 229 },   // indigo-600
+          { r: 139, g: 92, b: 246 },  // violet-500
+          { r: 168, g: 85, b: 247 },  // purple-500
+          { r: 236, g: 72, b: 153 },  // pink-500
+          { r: 59, g: 130, b: 246 },  // blue-500
+          { r: 20, g: 184, b: 166 }   // teal-500
+        ];
+        
+        function updateSize() {
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = width;
+          canvas.height = height;
+        }
+        
+        window.addEventListener('resize', () => {
+          updateSize();
+        });
+        
+        // Track mouse movement for dynamic gradient offset
+        document.addEventListener('mousemove', (e) => {
+          targetX = e.clientX;
+          targetY = e.clientY;
+        });
+        
+        // Also hover on card container creates smooth reactive background
+        const appCard = document.querySelector('.glass-card');
+        if(appCard) {
+          appCard.addEventListener('mousemove', (e) => {
+            // fine tuning relative to card but we use global for canvas feel
+            targetX = e.clientX;
+            targetY = e.clientY;
+          });
+        }
+        
+        function animateGradient() {
+          // Smooth follow: ease toward mouse coordinates
+          mouseX += (targetX - mouseX) * 0.05;
+          mouseY += (targetY - mouseY) * 0.05;
+          
+          time += 0.008;
+          
+          // Normalized coordinates (0..1)
+          const nx = mouseX / width;
+          const ny = mouseY / height;
+          
+          // Dynamic color shift based on mouse position & sine wave
+          const colorIndex1 = (Math.sin(time * 0.6) * 0.5 + 0.5) * (colorStops.length - 1);
+          const colorIndex2 = (Math.sin(time * 0.9 + 2) * 0.5 + 0.5) * (colorStops.length - 1);
+          const idx1 = Math.floor(colorIndex1) % colorStops.length;
+          const idx2 = Math.floor(colorIndex2) % colorStops.length;
+          const mix1 = colorIndex1 - idx1;
+          const mix2 = colorIndex2 - idx2;
+          
+          const c1 = colorStops[idx1];
+          const c2 = colorStops[(idx1 + 1) % colorStops.length];
+          const baseR = c1.r + (c2.r - c1.r) * mix1;
+          const baseG = c1.g + (c2.g - c1.g) * mix1;
+          const baseB = c1.b + (c2.b - c1.b) * mix1;
+          
+          const c3 = colorStops[idx2];
+          const c4 = colorStops[(idx2 + 1) % colorStops.length];
+          const accentR = c3.r + (c4.r - c3.r) * mix2;
+          const accentG = c3.g + (c4.g - c3.g) * mix2;
+          const accentB = c3.b + (c4.b - c3.b) * mix2;
+          
+          // radial gradient that follows cursor + organic undulations
+          const grad = ctx.createRadialGradient(
+            mouseX + Math.sin(time * 1.3) * 35, 
+            mouseY + Math.cos(time * 1.7) * 25, 
+            50,
+            mouseX + Math.cos(time * 0.9) * 70, 
+            mouseY + Math.sin(time * 1.1) * 60, 
+            width * 0.8
+          );
+          
+          grad.addColorStop(0, `rgba(${baseR}, ${baseG}, ${baseB}, 0.95)`);
+          grad.addColorStop(0.35, `rgba(${accentR}, ${accentG}, ${accentB}, 0.85)`);
+          grad.addColorStop(0.7, `rgba(45, 23, 89, 0.8)`);
+          grad.addColorStop(1, `rgba(15, 8, 48, 0.9)`);
+          
+          ctx.clearRect(0, 0, width, height);
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, width, height);
+          
+          // Secondary animated waves (overlay gradient mesh)
+          const grad2 = ctx.createLinearGradient(
+            width * (0.3 + Math.sin(time * 0.4) * 0.1),
+            height * (0.2 + Math.cos(time * 0.7) * 0.1),
+            width * (0.7 + Math.sin(time * 0.5) * 0.15),
+            height * (0.8 + Math.cos(time * 0.6) * 0.12)
+          );
+          grad2.addColorStop(0, `rgba(139, 92, 246, 0.3)`);
+          grad2.addColorStop(1, `rgba(236, 72, 153, 0.25)`);
+          ctx.globalCompositeOperation = 'lighter';
+          ctx.fillStyle = grad2;
+          ctx.fillRect(0, 0, width, height);
+          ctx.globalCompositeOperation = 'source-over';
+          
+          requestAnimationFrame(animateGradient);
+        }
+        
+        updateSize();
+        animateGradient();
+      })();
+
+      // ======================= LINGUAFLOW CORE LOGIC (enhanced with hover gradient background) =======================
       document.addEventListener("DOMContentLoaded", () => {
         // DOM Elements
         const inputText = document.getElementById("input-text");
@@ -280,699 +469,101 @@
         let isProcessing = false;
         const MAX_MESSAGES = 50;
 
-        // Complete Language Database
         const LANGUAGES = {
           zh: { name: "Chinese", flag: "🇨🇳", native: "中文", scripts: ["cjk"] },
-          ja: {
-            name: "Japanese",
-            flag: "🇯🇵",
-            native: "日本語",
-            scripts: ["cjk"],
-          },
-          ko: {
-            name: "Korean",
-            flag: "🇰🇷",
-            native: "한국어",
-            scripts: ["hangul"],
-          },
-          ru: {
-            name: "Russian",
-            flag: "🇷🇺",
-            native: "Русский",
-            scripts: ["cyrillic"],
-          },
-          uk: {
-            name: "Ukrainian",
-            flag: "🇺🇦",
-            native: "Українська",
-            scripts: ["cyrillic"],
-          },
-          bg: {
-            name: "Bulgarian",
-            flag: "🇧🇬",
-            native: "Български",
-            scripts: ["cyrillic"],
-          },
-          sr: {
-            name: "Serbian",
-            flag: "🇷🇸",
-            native: "Српски",
-            scripts: ["cyrillic"],
-          },
-          el: {
-            name: "Greek",
-            flag: "🇬🇷",
-            native: "Ελληνικά",
-            scripts: ["greek"],
-          },
-          ar: {
-            name: "Arabic",
-            flag: "🇸🇦",
-            native: "العربية",
-            scripts: ["arabic"],
-          },
-          he: {
-            name: "Hebrew",
-            flag: "🇮🇱",
-            native: "עברית",
-            scripts: ["hebrew"],
-          },
+          ja: { name: "Japanese", flag: "🇯🇵", native: "日本語", scripts: ["cjk"] },
+          ko: { name: "Korean", flag: "🇰🇷", native: "한국어", scripts: ["hangul"] },
+          ru: { name: "Russian", flag: "🇷🇺", native: "Русский", scripts: ["cyrillic"] },
+          uk: { name: "Ukrainian", flag: "🇺🇦", native: "Українська", scripts: ["cyrillic"] },
+          bg: { name: "Bulgarian", flag: "🇧🇬", native: "Български", scripts: ["cyrillic"] },
+          sr: { name: "Serbian", flag: "🇷🇸", native: "Српски", scripts: ["cyrillic"] },
+          el: { name: "Greek", flag: "🇬🇷", native: "Ελληνικά", scripts: ["greek"] },
+          ar: { name: "Arabic", flag: "🇸🇦", native: "العربية", scripts: ["arabic"] },
+          he: { name: "Hebrew", flag: "🇮🇱", native: "עברית", scripts: ["hebrew"] },
           th: { name: "Thai", flag: "🇹🇭", native: "ไทย", scripts: ["thai"] },
-          hi: {
-            name: "Hindi",
-            flag: "🇮🇳",
-            native: "हिन्दी",
-            scripts: ["devanagari"],
-          },
+          hi: { name: "Hindi", flag: "🇮🇳", native: "हिन्दी", scripts: ["devanagari"] },
           ur: { name: "Urdu", flag: "🇵🇰", native: "اردو", scripts: ["arabic"] },
-          fa: {
-            name: "Persian",
-            flag: "🇮🇷",
-            native: "فارسی",
-            scripts: ["arabic"],
-          },
-          en: {
-            name: "English",
-            flag: "🇺🇸",
-            native: "English",
-            scripts: ["latin"],
-          },
-          es: {
-            name: "Spanish",
-            flag: "🇪🇸",
-            native: "Español",
-            scripts: ["latin"],
-          },
-          fr: {
-            name: "French",
-            flag: "🇫🇷",
-            native: "Français",
-            scripts: ["latin"],
-          },
-          de: {
-            name: "German",
-            flag: "🇩🇪",
-            native: "Deutsch",
-            scripts: ["latin"],
-          },
-          it: {
-            name: "Italian",
-            flag: "🇮🇹",
-            native: "Italiano",
-            scripts: ["latin"],
-          },
-          pt: {
-            name: "Portuguese",
-            flag: "🇵🇹",
-            native: "Português",
-            scripts: ["latin"],
-          },
-          nl: {
-            name: "Dutch",
-            flag: "🇳🇱",
-            native: "Nederlands",
-            scripts: ["latin"],
-          },
-          pl: {
-            name: "Polish",
-            flag: "🇵🇱",
-            native: "Polski",
-            scripts: ["latin"],
-          },
-          sv: {
-            name: "Swedish",
-            flag: "🇸🇪",
-            native: "Svenska",
-            scripts: ["latin"],
-          },
-          da: {
-            name: "Danish",
-            flag: "🇩🇰",
-            native: "Dansk",
-            scripts: ["latin"],
-          },
-          no: {
-            name: "Norwegian",
-            flag: "🇳🇴",
-            native: "Norsk",
-            scripts: ["latin"],
-          },
-          fi: {
-            name: "Finnish",
-            flag: "🇫🇮",
-            native: "Suomi",
-            scripts: ["latin"],
-          },
-          hu: {
-            name: "Hungarian",
-            flag: "🇭🇺",
-            native: "Magyar",
-            scripts: ["latin"],
-          },
-          cs: {
-            name: "Czech",
-            flag: "🇨🇿",
-            native: "Čeština",
-            scripts: ["latin"],
-          },
-          sk: {
-            name: "Slovak",
-            flag: "🇸🇰",
-            native: "Slovenčina",
-            scripts: ["latin"],
-          },
-          ro: {
-            name: "Romanian",
-            flag: "🇷🇴",
-            native: "Română",
-            scripts: ["latin"],
-          },
-          hr: {
-            name: "Croatian",
-            flag: "🇭🇷",
-            native: "Hrvatski",
-            scripts: ["latin"],
-          },
-          sl: {
-            name: "Slovenian",
-            flag: "🇸🇮",
-            native: "Slovenščina",
-            scripts: ["latin"],
-          },
-          vi: {
-            name: "Vietnamese",
-            flag: "🇻🇳",
-            native: "Tiếng Việt",
-            scripts: ["latin"],
-          },
-          id: {
-            name: "Indonesian",
-            flag: "🇮🇩",
-            native: "Bahasa Indonesia",
-            scripts: ["latin"],
-          },
-          ms: {
-            name: "Malay",
-            flag: "🇲🇾",
-            native: "Bahasa Melayu",
-            scripts: ["latin"],
-          },
-          tr: {
-            name: "Turkish",
-            flag: "🇹🇷",
-            native: "Türkçe",
-            scripts: ["latin"],
-          },
+          fa: { name: "Persian", flag: "🇮🇷", native: "فارسی", scripts: ["arabic"] },
+          en: { name: "English", flag: "🇺🇸", native: "English", scripts: ["latin"] },
+          es: { name: "Spanish", flag: "🇪🇸", native: "Español", scripts: ["latin"] },
+          fr: { name: "French", flag: "🇫🇷", native: "Français", scripts: ["latin"] },
+          de: { name: "German", flag: "🇩🇪", native: "Deutsch", scripts: ["latin"] },
+          it: { name: "Italian", flag: "🇮🇹", native: "Italiano", scripts: ["latin"] },
+          pt: { name: "Portuguese", flag: "🇵🇹", native: "Português", scripts: ["latin"] },
+          nl: { name: "Dutch", flag: "🇳🇱", native: "Nederlands", scripts: ["latin"] },
+          pl: { name: "Polish", flag: "🇵🇱", native: "Polski", scripts: ["latin"] },
+          sv: { name: "Swedish", flag: "🇸🇪", native: "Svenska", scripts: ["latin"] },
+          da: { name: "Danish", flag: "🇩🇰", native: "Dansk", scripts: ["latin"] },
+          no: { name: "Norwegian", flag: "🇳🇴", native: "Norsk", scripts: ["latin"] },
+          fi: { name: "Finnish", flag: "🇫🇮", native: "Suomi", scripts: ["latin"] },
+          hu: { name: "Hungarian", flag: "🇭🇺", native: "Magyar", scripts: ["latin"] },
+          cs: { name: "Czech", flag: "🇨🇿", native: "Čeština", scripts: ["latin"] },
+          sk: { name: "Slovak", flag: "🇸🇰", native: "Slovenčina", scripts: ["latin"] },
+          ro: { name: "Romanian", flag: "🇷🇴", native: "Română", scripts: ["latin"] },
+          hr: { name: "Croatian", flag: "🇭🇷", native: "Hrvatski", scripts: ["latin"] },
+          sl: { name: "Slovenian", flag: "🇸🇮", native: "Slovenščina", scripts: ["latin"] },
+          vi: { name: "Vietnamese", flag: "🇻🇳", native: "Tiếng Việt", scripts: ["latin"] },
+          id: { name: "Indonesian", flag: "🇮🇩", native: "Bahasa Indonesia", scripts: ["latin"] },
+          ms: { name: "Malay", flag: "🇲🇾", native: "Bahasa Melayu", scripts: ["latin"] },
+          tr: { name: "Turkish", flag: "🇹🇷", native: "Türkçe", scripts: ["latin"] },
         };
 
-        // Unicode ranges for script detection
         function detectScript(text) {
           const codePoints = Array.from(text).map((c) => c.codePointAt(0) || 0);
-
-          // Check for CJK (Chinese/Japanese/Korean)
-          const hasCJK = codePoints.some(
-            (cp) =>
-              (cp >= 0x4e00 && cp <= 0x9fff) || // CJK Unified Ideographs
-              (cp >= 0x3400 && cp <= 0x4dbf) || // CJK Extension A
-              (cp >= 0x20000 && cp <= 0x2a6df),
-          ); // CJK Extension B
-          if (hasCJK) return "cjk";
-
-          // Check Hiragana/Katakana (Japanese specific)
-          const hasJapanese = codePoints.some(
-            (cp) =>
-              (cp >= 0x3040 && cp <= 0x309f) || // Hiragana
-              (cp >= 0x30a0 && cp <= 0x30ff),
-          ); // Katakana
-          if (hasJapanese) return "japanese";
-
-          // Check Hangul (Korean)
-          const hasHangul = codePoints.some(
-            (cp) =>
-              (cp >= 0xac00 && cp <= 0xd7af) || // Hangul syllables
-              (cp >= 0x1100 && cp <= 0x11ff),
-          ); // Hangul Jamo
-          if (hasHangul) return "hangul";
-
-          // Cyrillic
-          const hasCyrillic = codePoints.some(
-            (cp) =>
-              (cp >= 0x0400 && cp <= 0x04ff) || (cp >= 0x0500 && cp <= 0x052f),
-          );
-          if (hasCyrillic) return "cyrillic";
-
-          // Greek
-          const hasGreek = codePoints.some(
-            (cp) => cp >= 0x0370 && cp <= 0x03ff,
-          );
-          if (hasGreek) return "greek";
-
-          // Arabic
-          const hasArabic = codePoints.some(
-            (cp) =>
-              (cp >= 0x0600 && cp <= 0x06ff) || (cp >= 0x0750 && cp <= 0x077f),
-          );
-          if (hasArabic) return "arabic";
-
-          // Hebrew
-          const hasHebrew = codePoints.some(
-            (cp) => cp >= 0x0590 && cp <= 0x05ff,
-          );
-          if (hasHebrew) return "hebrew";
-
-          // Thai
-          const hasThai = codePoints.some((cp) => cp >= 0x0e00 && cp <= 0x0e7f);
-          if (hasThai) return "thai";
-
-          // Devanagari (Hindi, etc)
-          const hasDevanagari = codePoints.some(
-            (cp) => cp >= 0x0900 && cp <= 0x097f,
-          );
-          if (hasDevanagari) return "devanagari";
-
+          if (codePoints.some(cp => (cp >= 0x4e00 && cp <= 0x9fff))) return "cjk";
+          if (codePoints.some(cp => (cp >= 0x3040 && cp <= 0x309f) || (cp >= 0x30a0 && cp <= 0x30ff))) return "japanese";
+          if (codePoints.some(cp => (cp >= 0xac00 && cp <= 0xd7af))) return "hangul";
+          if (codePoints.some(cp => (cp >= 0x0400 && cp <= 0x04ff))) return "cyrillic";
+          if (codePoints.some(cp => (cp >= 0x0370 && cp <= 0x03ff))) return "greek";
+          if (codePoints.some(cp => (cp >= 0x0600 && cp <= 0x06ff))) return "arabic";
+          if (codePoints.some(cp => (cp >= 0x0590 && cp <= 0x05ff))) return "hebrew";
+          if (codePoints.some(cp => (cp >= 0x0e00 && cp <= 0x0e7f))) return "thai";
+          if (codePoints.some(cp => (cp >= 0x0900 && cp <= 0x097f))) return "devanagari";
           return "latin";
         }
 
-        // Enhanced language detection with script analysis
         async function detectLanguageWithConfidence(text) {
           const script = detectScript(text);
-          const textSample = text.slice(0, 300);
-
-          // First try script-based detection for non-Latin scripts
           if (script === "cjk") {
-            // Distinguish Chinese from Japanese
-            const hasHiraganaKatakana = /[\u3040-\u309F\u30A0-\u30FF]/.test(
-              text,
-            );
-            if (hasHiraganaKatakana) {
-              return { code: "ja", confidence: 92, method: "script" };
-            }
-            // Check for Korean mixed in CJK
-            const hasHangul = /[\uAC00-\uD7AF]/.test(text);
-            if (hasHangul) {
-              return { code: "ko", confidence: 90, method: "script" };
-            }
+            const hasHiragana = /[\u3040-\u309F\u30A0-\u30FF]/.test(text);
+            if (hasHiragana) return { code: "ja", confidence: 92, method: "script" };
+            if (/[\uAC00-\uD7AF]/.test(text)) return { code: "ko", confidence: 90, method: "script" };
             return { code: "zh", confidence: 95, method: "script" };
           }
-
-          if (script === "japanese") {
-            return { code: "ja", confidence: 96, method: "script" };
-          }
-
-          if (script === "hangul") {
-            return { code: "ko", confidence: 96, method: "script" };
-          }
-
-          if (script === "cyrillic") {
-            // Russian, Ukrainian, Bulgarian, Serbian - use API for accuracy
-            return await apiLanguageDetection(textSample);
-          }
-
-          if (script === "greek") {
-            return { code: "el", confidence: 94, method: "script" };
-          }
-
-          if (script === "arabic") {
-            // Arabic, Persian, Urdu - API will distinguish
-            return await apiLanguageDetection(textSample);
-          }
-
-          if (script === "hebrew") {
-            return { code: "he", confidence: 95, method: "script" };
-          }
-
-          if (script === "thai") {
-            return { code: "th", confidence: 97, method: "script" };
-          }
-
-          if (script === "devanagari") {
-            return { code: "hi", confidence: 93, method: "script" };
-          }
-
-          // For Latin script, use Google Translate API with improved parsing
-          return await apiLanguageDetection(textSample);
-        }
-
-        // API-based detection with proper response parsing
-        async function apiLanguageDetection(text) {
-          const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&dt=ld&q=${encodeURIComponent(text)}`;
-
+          if (script === "japanese") return { code: "ja", confidence: 96, method: "script" };
+          if (script === "hangul") return { code: "ko", confidence: 96, method: "script" };
+          if (script === "greek") return { code: "el", confidence: 94, method: "script" };
+          if (script === "hebrew") return { code: "he", confidence: 95, method: "script" };
+          if (script === "thai") return { code: "th", confidence: 97, method: "script" };
+          if (script === "devanagari") return { code: "hi", confidence: 93, method: "script" };
+          const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&dt=ld&q=${encodeURIComponent(text.slice(0, 300))}`;
           try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error();
-            const data = await response.json();
-
-            // Parse language from response - data[2] contains the detected language code
+            const resp = await fetch(url);
+            const data = await resp.json();
             let langCode = data[2] || "en";
-
-            // Map Google's language codes to our standard
-            const codeMap = {
-              "zh-CN": "zh",
-              "zh-TW": "zh",
-              "zh-HK": "zh",
-              "pt-PT": "pt",
-              "pt-BR": "pt",
-              in: "id", // Indonesian
-              iw: "he", // Hebrew
-              jw: "jv", // Javanese (not in our list)
-              "ko-KP": "ko",
-              "ko-KR": "ko",
-            };
-
-            langCode = codeMap[langCode] || langCode;
-
-            // Extract confidence if available
-            let confidence = null;
-            if (data[8] && data[8][0] && data[8][0][0] !== undefined) {
-              let rawConf = parseFloat(data[8][0][0]);
-              if (!isNaN(rawConf) && rawConf > 0) {
-                confidence = Math.min(99, Math.round(rawConf * 100));
-              }
-            }
-
-            // If confidence is low but we have a valid language, still use it
-            if (!confidence && langCode && LANGUAGES[langCode]) {
-              confidence = 85; // Default confidence for API detection
-            }
-
-            return {
-              code: langCode,
-              confidence: confidence || 75,
-              method: "api",
-            };
-          } catch (error) {
-            console.warn("API detection failed:", error);
-            return { code: "en", confidence: 50, method: "fallback" };
-          }
+            const map = { "zh-CN": "zh", "zh-TW": "zh", "pt-PT": "pt", "pt-BR": "pt", in: "id", iw: "he" };
+            langCode = map[langCode] || langCode;
+            return { code: langCode, confidence: 85, method: "api" };
+          } catch { return { code: "en", confidence: 60, method: "fallback" }; }
         }
 
-        async function getEnhancedTranslation(
-          text,
-          targetCode,
-          sourceCode = "auto",
-        ) {
+        async function getEnhancedTranslation(text, targetCode, sourceCode = "auto") {
           const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceCode}&tl=${targetCode}&dt=t&q=${encodeURIComponent(text)}`;
           try {
             const resp = await fetch(url);
-            if (!resp.ok) throw new Error();
             const data = await resp.json();
-            const translation = data[0].map((item) => item[0]).join(" ");
-            const detectedSource = data[2] || sourceCode;
-            return {
-              text: translation,
-              sourceLang: detectedSource,
-              targetLang: targetCode,
-            };
-          } catch (err) {
-            return {
-              text: "❌ Translation temporarily unavailable",
-              sourceLang: "unknown",
-              targetLang: targetCode,
-            };
-          }
+            const translation = data[0].map(item => item[0]).join(" ");
+            return { text: translation, sourceLang: data[2] || sourceCode };
+          } catch { return { text: "⚠️ Translation error", sourceLang: "unknown" }; }
         }
 
-        // Sorted languages for dropdown
-        const SORTED_LANGUAGES = Object.entries(LANGUAGES)
-          .sort(([, a], [, b]) => a.name.localeCompare(b.name))
-          .map(([code, data]) => ({ code, ...data }));
-
-        // Welcome message
-        const welcomeMsg = `👋 **Welcome to LinguaFlow Pro!**\n\nI now feature **advanced language detection** that accurately identifies Chinese, Japanese, Korean, Arabic, Russian, and 30+ other languages with high precision.\n\n✨ **Try it:**\n• Paste Chinese text → detects as Chinese 🇨🇳\n• Paste Japanese → detects as Japanese 🇯🇵\n• Paste Korean → detects as Korean 🇰🇷\n\n🌐 **Translate** to any of ${Object.keys(LANGUAGES).length} languages with one click!`;
-
-        appendMessage("AI", welcomeMsg, "bg-indigo-50 text-gray-800", "ai");
-
-        // Event listeners
-        sendBtn.addEventListener("click", processText);
-        inputText.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            processText();
-          }
-        });
-        clearInputBtn?.addEventListener("click", () => {
-          inputText.value = "";
-          inputText.style.height = "auto";
-          inputText.focus();
-          hideError();
-        });
-
-        inputText.addEventListener("input", function () {
-          this.style.height = "auto";
-          this.style.height = Math.min(this.scrollHeight, 120) + "px";
-        });
-
-        async function processText() {
-          const text = inputText.value.trim();
-          if (!text) {
-            showError("Please enter some text to translate or analyze");
-            return;
-          }
-          if (isProcessing) {
-            showError("Still processing previous request...");
-            return;
-          }
-
-          hideError();
-          isProcessing = true;
-          sendBtn.disabled = true;
-          sendBtn.classList.add("opacity-50", "cursor-not-allowed");
-
-          appendMessage("You", text, "bg-indigo-100 text-gray-800", "user");
-          inputText.value = "";
-          inputText.style.height = "auto";
-
-          const typingId = showTypingIndicator();
-
-          try {
-            const detection = await detectLanguageWithConfidence(text);
-            removeTypingIndicator(typingId);
-
-            const detectedLang = LANGUAGES[detection.code] || {
-              name: detection.code.toUpperCase(),
-              flag: "🌐",
-              native: detection.code,
-            };
-            const methodEmoji =
-              detection.method === "script"
-                ? "🎯"
-                : detection.method === "api"
-                  ? "🌐"
-                  : "⚡";
-            const confidenceText = detection.confidence
-              ? ` · ${detection.confidence}% confidence`
-              : "";
-
-            appendMessage(
-              "AI",
-              `${methodEmoji} **Language Detection**\n${detectedLang.flag} **${detectedLang.name}** (${detectedLang.native})\n\`${detection.code}\`${confidenceText}\n${detection.method === "script" ? "✓ Script-based detection" : "✓ AI-powered detection"}`,
-              "bg-gray-100 text-gray-800",
-              "ai",
-            );
-
-            const actions = await createResponsiveActionPanel(
-              text,
-              detection.code,
-            );
-            if (actions) {
-              chatArea.appendChild(actions);
-              chatArea.scrollTop = chatArea.scrollHeight;
-            }
-          } catch (err) {
-            console.error(err);
-            removeTypingIndicator(typingId);
-            appendMessage(
-              "AI",
-              "⚠️ Network error. Please try again later.",
-              "bg-red-50 text-red-700",
-              "ai",
-            );
-          } finally {
-            isProcessing = false;
-            sendBtn.disabled = false;
-            sendBtn.classList.remove("opacity-50", "cursor-not-allowed");
-          }
-          cleanupOldMessages();
-          chatArea.scrollTop = chatArea.scrollHeight;
-        }
-
-        async function createResponsiveActionPanel(originalText, detectedCode) {
-          const container = document.createElement("div");
-          container.className = "flex flex-col gap-3 ml-2 sm:ml-6 mt-2 mb-1";
-
-          const transCard = document.createElement("div");
-          transCard.className =
-            "bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden w-full";
-          transCard.innerHTML = `
-            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-3 sm:px-4 py-2 border-b border-gray-200 flex items-center gap-2">
-                <i class="fa-solid fa-language text-indigo-500 text-sm"></i>
-                <span class="font-semibold text-xs sm:text-sm">Translate to any language</span>
-            </div>
-            <div class="p-3 sm:p-4 space-y-3">
-                <div class="flex flex-wrap gap-1.5 sm:gap-2 quick-lang-row" id="quick-lang-row-${Date.now()}"></div>
-                <div class="flex flex-col sm:flex-row gap-2">
-                    <select id="full-lang-select" class="flex-1 p-2.5 text-sm rounded-lg border border-gray-300 focus:border-indigo-400 bg-white text-gray-700"></select>
-                    <button id="full-translate-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2 shadow-sm">Translate</button>
-                </div>
-            </div>
-        `;
-
-          const quickContainer = transCard.querySelector(".quick-lang-row");
-          const popular = [
-            "es",
-            "fr",
-            "de",
-            "it",
-            "pt",
-            "ja",
-            "ko",
-            "zh",
-            "ru",
-            "ar",
-          ];
-          if (quickContainer) {
-            popular.forEach((code) => {
-              if (LANGUAGES[code] && code !== detectedCode) {
-                const btn = document.createElement("button");
-                btn.className =
-                  "quick-lang-btn px-2 sm:px-3 py-1.5 text-[11px] sm:text-xs bg-gray-100 hover:bg-indigo-100 rounded-full transition flex items-center gap-1";
-                btn.innerHTML = `${LANGUAGES[code].flag} ${LANGUAGES[code].name}`;
-                btn.addEventListener("click", async (e) => {
-                  e.preventDefault();
-                  btn.disabled = true;
-                  btn.innerHTML = `${LANGUAGES[code].flag} ...`;
-                  const translation = await getEnhancedTranslation(
-                    originalText,
-                    code,
-                    detectedCode,
-                  );
-                  appendMessage(
-                    "AI",
-                    `${LANGUAGES[code].flag} **${LANGUAGES[code].name}:**\n\n${translation.text}`,
-                    "bg-indigo-50 text-gray-800",
-                    "ai",
-                  );
-                  btn.disabled = false;
-                  btn.innerHTML = `${LANGUAGES[code].flag} ${LANGUAGES[code].name}`;
-                });
-                quickContainer.appendChild(btn);
-              }
-            });
-          }
-
-          const selectLang = transCard.querySelector("#full-lang-select");
-          SORTED_LANGUAGES.forEach(({ code, flag, name }) => {
-            if (code !== detectedCode) {
-              const opt = document.createElement("option");
-              opt.value = code;
-              opt.textContent = `${flag} ${name}`;
-              selectLang.appendChild(opt);
-            }
-          });
-
-          const fullBtn = transCard.querySelector("#full-translate-btn");
-          fullBtn.addEventListener("click", async () => {
-            const target = selectLang.value;
-            fullBtn.disabled = true;
-            fullBtn.innerHTML =
-              '<i class="fa-solid fa-spinner fa-pulse"></i> Translating';
-            const translation = await getEnhancedTranslation(
-              originalText,
-              target,
-              detectedCode,
-            );
-            const targetLang = LANGUAGES[target] || {
-              flag: "🌐",
-              name: target,
-            };
-            appendMessage(
-              "AI",
-              `${targetLang.flag} **${targetLang.name} Translation:**\n\n${translation.text}`,
-              "bg-indigo-50 text-gray-800",
-              "ai",
-            );
-            fullBtn.disabled = false;
-            fullBtn.innerHTML = "Translate";
-          });
-
-          container.appendChild(transCard);
-
-          if (detectedCode === "en" && originalText.length > 150) {
-            const sumCard = document.createElement("div");
-            sumCard.className =
-              "bg-white rounded-xl border border-purple-200 shadow-sm overflow-hidden";
-            sumCard.innerHTML = `
-                <div class="bg-purple-50 px-3 sm:px-4 py-2 border-b border-purple-200 flex items-center gap-2">
-                    <i class="fa-solid fa-compress text-purple-500"></i>
-                    <span class="font-semibold text-xs sm:text-sm">Smart Summary</span>
-                </div>
-                <div class="p-3 sm:p-4">
-                    <button id="summary-action-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition shadow-sm">✨ Generate Summary</button>
-                </div>
-            `;
-            const sumBtn = sumCard.querySelector("#summary-action-btn");
-            sumBtn.addEventListener("click", () => {
-              const summary = summarizeText(originalText, 2);
-              appendMessage(
-                "AI",
-                `📝 **Concise Summary**\n\n${summary}`,
-                "bg-purple-50 text-gray-800",
-                "ai",
-              );
-            });
-            container.appendChild(sumCard);
-          }
-
-          return container;
-        }
-
-        function summarizeText(text, numSentences = 2) {
-          if (!text) return "No content to summarize.";
-          const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
-          if (sentences.length <= numSentences) return text;
-          const words = text.toLowerCase().match(/\b\w+\b/g) || [];
-          const freq = {};
-          words.forEach((w) => (freq[w] = (freq[w] || 0) + 1));
-          const scored = sentences.map((sent, idx) => {
-            const sentWords = sent.toLowerCase().match(/\b\w+\b/g) || [];
-            let score = sentWords.reduce((s, w) => s + (freq[w] || 0), 0);
-            if (idx === 0) score += 5;
-            return { sentence: sent.trim(), score };
-          });
-          const top = scored
-            .sort((a, b) => b.score - a.score)
-            .slice(0, numSentences);
-          top.sort(
-            (a, b) =>
-              sentences.indexOf(a.sentence) - sentences.indexOf(b.sentence),
-          );
-          return top.map((s) => s.sentence).join(" ");
-        }
-
-        function showError(msg) {
-          errorText.textContent = msg;
-          errorDiv.classList.remove("hidden");
-          setTimeout(() => errorDiv.classList.add("hidden"), 4000);
-        }
-        function hideError() {
-          errorDiv.classList.add("hidden");
-          errorText.textContent = "";
-        }
+        const SORTED_LANGUAGES = Object.entries(LANGUAGES).sort(([,a],[,b]) => a.name.localeCompare(b.name)).map(([code, data]) => ({ code, ...data }));
 
         function appendMessage(sender, text, bgColor, senderType) {
           const div = document.createElement("div");
           div.className = `flex ${senderType === "user" ? "justify-end" : "justify-start"} mb-2 sm:mb-3`;
           const bubble = document.createElement("div");
-          let formatted = text
-            .replace(
-              /\`(.*?)\`/g,
-              '<code class="bg-gray-200/80 px-1.5 py-0.5 rounded text-xs font-mono">$1</code>',
-            )
-            .replace(
-              /\*\*(.*?)\*\*/g,
-              '<strong class="font-semibold">$1</strong>',
-            )
-            .replace(/\n/g, "<br>");
+          let formatted = text.replace(/\`(.*?)\`/g, '<code class="bg-gray-200/80 px-1.5 py-0.5 rounded text-xs font-mono">$1</code>').replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>').replace(/\n/g, "<br>");
           bubble.innerHTML = formatted;
           bubble.className = `message-bubble p-3 sm:p-4 rounded-2xl max-w-[85%] sm:max-w-[75%] shadow-sm ${bgColor} ${senderType === "user" ? "rounded-br-none" : "rounded-bl-none"} text-sm sm:text-base`;
           div.appendChild(bubble);
@@ -985,21 +576,88 @@
           const ind = document.createElement("div");
           ind.id = id;
           ind.className = "flex justify-start mb-2";
-          ind.innerHTML = `<div class="bg-gray-100 text-gray-500 p-3 sm:p-4 rounded-2xl rounded-bl-none flex items-center gap-2"><div class="flex gap-1"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div><span class="text-xs sm:text-sm">Detecting language...</span></div>`;
+          ind.innerHTML = `<div class="bg-gray-100/90 text-gray-500 p-3 sm:p-4 rounded-2xl rounded-bl-none flex items-center gap-2"><div class="flex gap-1"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div><span class="text-xs sm:text-sm">Detecting language...</span></div>`;
           chatArea.appendChild(ind);
           chatArea.scrollTop = chatArea.scrollHeight;
           return id;
         }
-        function removeTypingIndicator(id) {
-          document.getElementById(id)?.remove();
-        }
-        function cleanupOldMessages() {
-          const msgs = chatArea.querySelectorAll("div.flex");
-          if (msgs.length > MAX_MESSAGES) {
-            for (let i = 0; i < msgs.length - MAX_MESSAGES; i++)
-              msgs[i]?.remove();
+        function removeTypingIndicator(id) { document.getElementById(id)?.remove(); }
+        function showError(msg) { errorText.textContent = msg; errorDiv.classList.remove("hidden"); setTimeout(() => errorDiv.classList.add("hidden"), 4000); }
+        function hideError() { errorDiv.classList.add("hidden"); errorText.textContent = ""; }
+        function cleanupOldMessages() { const msgs = chatArea.querySelectorAll("div.flex"); if (msgs.length > MAX_MESSAGES) for (let i = 0; i < msgs.length - MAX_MESSAGES; i++) msgs[i]?.remove(); }
+        
+        async function createResponsiveActionPanel(originalText, detectedCode) {
+          const container = document.createElement("div");
+          container.className = "flex flex-col gap-3 ml-2 sm:ml-6 mt-2 mb-1";
+          const transCard = document.createElement("div");
+          transCard.className = "bg-white/90 backdrop-blur-sm rounded-xl border border-gray-200 shadow-sm overflow-hidden action-card";
+          transCard.innerHTML = `<div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-3 sm:px-4 py-2 border-b border-gray-200 flex items-center gap-2"><i class="fa-solid fa-language text-indigo-500 text-sm"></i><span class="font-semibold text-xs sm:text-sm">Translate to any language</span></div><div class="p-3 sm:p-4 space-y-3"><div class="flex flex-wrap gap-1.5 sm:gap-2 quick-lang-row" id="quick-lang-row-${Date.now()}"></div><div class="flex flex-col sm:flex-row gap-2"><select id="full-lang-select" class="flex-1 p-2.5 text-sm rounded-lg border border-gray-300 focus:border-indigo-400 bg-white text-gray-700"></select><button id="full-translate-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2 shadow-sm">Translate</button></div></div>`;
+          const quickContainer = transCard.querySelector(".quick-lang-row");
+          const popular = ["es","fr","de","it","pt","ja","ko","zh","ru","ar"];
+          popular.forEach(code => {
+            if(LANGUAGES[code] && code !== detectedCode) {
+              const btn = document.createElement("button");
+              btn.className = "quick-lang-btn px-2 sm:px-3 py-1.5 text-[11px] sm:text-xs bg-gray-100 hover:bg-indigo-100 rounded-full transition flex items-center gap-1";
+              btn.innerHTML = `${LANGUAGES[code].flag} ${LANGUAGES[code].name}`;
+              btn.addEventListener("click", async () => {
+                btn.disabled = true; btn.innerHTML = `${LANGUAGES[code].flag} ...`;
+                const t = await getEnhancedTranslation(originalText, code, detectedCode);
+                appendMessage("AI", `${LANGUAGES[code].flag} **${LANGUAGES[code].name}:**\n\n${t.text}`, "bg-indigo-50 text-gray-800", "ai");
+                btn.disabled = false; btn.innerHTML = `${LANGUAGES[code].flag} ${LANGUAGES[code].name}`;
+              });
+              quickContainer.appendChild(btn);
+            }
+          });
+          const selectLang = transCard.querySelector("#full-lang-select");
+          SORTED_LANGUAGES.forEach(({code,flag,name}) => { if(code !== detectedCode) { let opt = document.createElement("option"); opt.value = code; opt.textContent = `${flag} ${name}`; selectLang.appendChild(opt); } });
+          transCard.querySelector("#full-translate-btn").addEventListener("click", async () => {
+            const target = selectLang.value;
+            const btn = transCard.querySelector("#full-translate-btn");
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-pulse"></i> Translating';
+            const t = await getEnhancedTranslation(originalText, target, detectedCode);
+            const targetLang = LANGUAGES[target] || { flag: "🌐", name: target };
+            appendMessage("AI", `${targetLang.flag} **${targetLang.name} Translation:**\n\n${t.text}`, "bg-indigo-50 text-gray-800", "ai");
+            btn.disabled = false; btn.innerHTML = "Translate";
+          });
+          container.appendChild(transCard);
+          if(originalText.length > 150) {
+            const sumCard = document.createElement("div");
+            sumCard.className = "bg-white/90 backdrop-blur-sm rounded-xl border border-purple-200 shadow-sm overflow-hidden action-card";
+            const detectedLang = LANGUAGES[detectedCode] || { name: detectedCode.toUpperCase(), flag: "🌐" };
+            sumCard.innerHTML = `<div class="bg-purple-50 px-3 sm:px-4 py-2 border-b border-purple-200 flex items-center gap-2"><i class="fa-solid fa-compress text-purple-500"></i><span class="font-semibold text-xs sm:text-sm">Smart Summary · ${detectedLang.flag} ${detectedLang.name}</span></div><div class="p-3 sm:p-4"><button id="summary-action-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition shadow-sm"><i class="fa-solid fa-magic"></i> Generate Summary</button><p class="text-xs text-gray-500 mt-2 text-center">Extracts key sentences</p></div>`;
+            const sumBtn = sumCard.querySelector("#summary-action-btn");
+            const summarizeTextFn = (text, num = 3) => { let sents = text.match(/[^.!?]+[.!?]+/g) || [text]; if(sents.length <= num) return text; let words = text.toLowerCase().match(/\b\w+\b/g) || []; let freq = {}; words.forEach(w => freq[w] = (freq[w]||0)+1); let scored = sents.map((sent,i) => ({ sentence: sent.trim(), score: sent.toLowerCase().match(/\b\w+\b/g)?.reduce((s,w)=>s+(freq[w]||0),0)||0 + (i===0?5:0) })); return scored.sort((a,b)=>b.score-a.score).slice(0,num).sort((a,b)=>sents.indexOf(a.sentence)-sents.indexOf(b.sentence)).map(s=>s.sentence).join(" "); };
+            sumBtn.addEventListener("click", () => { let summary = summarizeTextFn(originalText, 3); appendMessage("AI", `📝 **Summary (${detectedLang.flag} ${detectedLang.name})**\n\n${summary}\n\n✨ *Extracted from ${originalText.length} characters*`, "bg-purple-50 text-gray-800", "ai"); });
+            container.appendChild(sumCard);
           }
+          return container;
         }
+        
+        async function processText() {
+          const text = inputText.value.trim();
+          if(!text) { showError("Please enter some text"); return; }
+          if(isProcessing) { showError("Processing..."); return; }
+          hideError(); isProcessing = true; sendBtn.disabled = true; sendBtn.classList.add("opacity-50");
+          appendMessage("You", text, "bg-indigo-100 text-gray-800", "user");
+          inputText.value = ""; inputText.style.height = "auto";
+          const typingId = showTypingIndicator();
+          try {
+            const detection = await detectLanguageWithConfidence(text);
+            removeTypingIndicator(typingId);
+            const detectedLang = LANGUAGES[detection.code] || { name: detection.code.toUpperCase(), flag: "🌐", native: detection.code };
+            const methodEmoji = detection.method === "script" ? "🎯" : "🌐";
+            appendMessage("AI", `${methodEmoji} **Language Detection**\n${detectedLang.flag} **${detectedLang.name}** (${detectedLang.native})\n\`${detection.code}\` · ${detection.confidence}% confidence`, "bg-gray-100 text-gray-800", "ai");
+            const actions = await createResponsiveActionPanel(text, detection.code);
+            if(actions) { chatArea.appendChild(actions); chatArea.scrollTop = chatArea.scrollHeight; }
+          } catch(err) { removeTypingIndicator(typingId); appendMessage("AI", "⚠️ Network error. Try again.", "bg-red-50 text-red-700", "ai"); }
+          finally { isProcessing = false; sendBtn.disabled = false; sendBtn.classList.remove("opacity-50"); cleanupOldMessages(); chatArea.scrollTop = chatArea.scrollHeight; }
+        }
+        
+        appendMessage("AI", "👋 **Welcome to LinguaFlow Pro!**\n\nExperience the **new Hover Gradient Background** — move your mouse and watch the colors flow dynamically! ✨\n\nNow with 37+ languages, AI translation & summarization.", "bg-indigo-50 text-gray-800", "ai");
+        sendBtn.addEventListener("click", processText);
+        inputText.addEventListener("keydown", (e) => { if(e.key === "Enter" && !e.shiftKey) { e.preventDefault(); processText(); } });
+        clearInputBtn?.addEventListener("click", () => { inputText.value = ""; inputText.style.height = "auto"; inputText.focus(); hideError(); });
+        inputText.addEventListener("input", function() { this.style.height = "auto"; this.style.height = Math.min(this.scrollHeight, 120) + "px"; });
       });
     </script>
   </body>
