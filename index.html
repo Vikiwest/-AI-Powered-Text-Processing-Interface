@@ -1,557 +1,1006 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <title>LinguaFlow Pro · 37+ Languages</title>
+    <!-- website icon -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%234f46e5'/%3E%3Cstop offset='100%25' stop-color='%23933ea1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath fill='url(%23grad)' d='M363 176L246 464h47.4l24.2-71h108.7l24.2 71H496L379 176h-16zm-53.3 167L352 241l42.3 102h-84.6zm-211.8 82L0 304l30.4-30.4 67.8 67.8L169 270.6l30.4 30.4L97.9 425zM256 0L137.1 119l30.4 30.4L256 60.9 344.5 149.4l30.4-30.4L256 0z'/%3E%3C/svg%3E"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        #chat-area { 
-            scroll-behavior: smooth; 
-            height: calc(100% - 120px);
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: linear-gradient(
+          135deg,
+          #1e1a4b 0%,
+          #2e1e5e 50%,
+          #4c1d6e 100%
+        );
+        background-attachment: fixed;
+      }
+      #chat-area {
+        scroll-behavior: smooth;
+        height: calc(100% - 130px);
+        min-height: 280px;
+      }
+      #chat-area::-webkit-scrollbar {
+        width: 5px;
+      }
+      #chat-area::-webkit-scrollbar-track {
+        background: #eef2ff;
+        border-radius: 10px;
+      }
+      #chat-area::-webkit-scrollbar-thumb {
+        background: #a5b4fc;
+        border-radius: 10px;
+      }
+
+      .lang-badge {
+        transition: all 0.2s ease;
+        cursor: default;
+      }
+      .lang-badge:hover {
+        transform: translateY(-1px);
+        background-color: #e0e7ff !important;
+      }
+
+      .typing-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #818cf8;
+        border-radius: 50%;
+        display: inline-block;
+        animation: bounce 1.4s infinite ease-in-out;
+      }
+      .typing-dot:nth-child(1) {
+        animation-delay: -0.32s;
+      }
+      .typing-dot:nth-child(2) {
+        animation-delay: -0.16s;
+      }
+      .typing-dot:nth-child(3) {
+        animation-delay: 0s;
+      }
+
+      @keyframes bounce {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.5);
+          opacity: 0.5;
         }
-        #chat-area::-webkit-scrollbar { width: 6px; }
-        #chat-area::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        #chat-area::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
-        #chat-area::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
-        
-        .lang-badge {
-            transition: all 0.3s ease;
+        40% {
+          transform: scale(1);
+          opacity: 1;
         }
-        .lang-badge:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      textarea {
+        font-family: "Inter", monospace;
+        font-size: 0.95rem;
+      }
+
+      .message-bubble {
+        word-break: break-word;
+        white-space: pre-wrap;
+      }
+
+      @media (max-width: 640px) {
+        .message-bubble {
+          max-width: 90% !important;
         }
-        
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #9ca3af;
-            border-radius: 50%;
-            display: inline-block;
-            animation: bounce 1.4s infinite ease-in-out;
+        .quick-lang-row button {
+          font-size: 0.7rem;
+          padding: 0.25rem 0.6rem;
         }
-        
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
+      }
+
+      button,
+      .quick-lang-btn,
+      .action-btn {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* Detection confidence bar */
+      .confidence-bar {
+        height: 4px;
+        background: linear-gradient(90deg, #10b981, #3b82f6);
+        border-radius: 2px;
+        transition: width 0.3s ease;
+      }
     </style>
-</head>
-<body class="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 h-screen flex flex-col justify-center items-center p-4">
-    <!-- Main Card Container -->
-    <div class="max-w-4xl w-full h-[90vh] flex flex-col bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
-        
-        <!-- Header -->
-        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-5 text-white font-semibold text-xl tracking-wide shadow-md flex justify-between items-center px-6">
-            <div class="flex items-center gap-3">
-                <i class="fa-solid fa-language text-2xl"></i>
-                <span>🌍 LinguaFlow Pro · AI Translator</span>
-            </div>
-            <div class="flex items-center gap-3">
-                <span class="text-xs bg-white/30 px-4 py-1.5 rounded-full flex items-center gap-1">
-                    <i class="fa-solid fa-globe"></i> 37+ Languages
-                </span>
-                <span class="text-xs bg-white/30 px-3 py-1.5 rounded-full">v3.0</span>
-            </div>
+  </head>
+  <body class="h-screen flex flex-col justify-center items-center p-3 sm:p-4">
+    <div
+      class="max-w-5xl w-full h-[95vh] sm:h-[90vh] flex flex-col bg-white/98 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/30 overflow-hidden transition-all duration-300"
+    >
+      <!-- Header -->
+      <div
+        class="bg-gradient-to-r from-indigo-700 to-purple-700 p-4 sm:p-5 text-white font-semibold shadow-md flex flex-wrap justify-between items-center gap-3 px-4 sm:px-6"
+      >
+        <div class="flex items-center gap-2 sm:gap-3">
+          <i class="fa-solid fa-language text-xl sm:text-2xl"></i>
+          <span class="text-base sm:text-xl tracking-tight"
+            >🌍 LinguaFlow Pro · AI Translator</span
+          >
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <span
+            class="text-[11px] sm:text-xs bg-white/30 px-3 sm:px-4 py-1.5 rounded-full flex items-center gap-1 backdrop-blur-sm"
+          >
+            <i class="fa-solid fa-globe text-xs"></i> 37+ Languages
+          </span>
+          <span
+            class="text-[11px] sm:text-xs bg-white/30 px-2 sm:px-3 py-1.5 rounded-full"
+            >v3.1</span
+          >
+        </div>
+      </div>
+
+      <!-- Language Stats Bar -->
+      <div
+        class="bg-indigo-50/90 px-4 sm:px-6 py-2 border-b border-indigo-100 flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm"
+      >
+        <i class="fa-solid fa-magic text-indigo-500 text-xs sm:text-sm"></i>
+        <span class="text-indigo-700 font-medium">Auto-detects:</span>
+        <div class="flex flex-wrap gap-1.5">
+          <span
+            class="lang-badge bg-white/80 px-2 py-0.5 rounded-full text-[11px] sm:text-xs shadow-sm"
+            >🇺🇸 English</span
+          >
+          <span
+            class="lang-badge bg-white/80 px-2 py-0.5 rounded-full text-[11px] sm:text-xs shadow-sm"
+            >🇪🇸 Spanish</span
+          >
+          <span
+            class="lang-badge bg-white/80 px-2 py-0.5 rounded-full text-[11px] sm:text-xs shadow-sm"
+            >🇫🇷 French</span
+          >
+          <span
+            class="lang-badge bg-white/80 px-2 py-0.5 rounded-full text-[11px] sm:text-xs shadow-sm"
+            >🇩🇪 German</span
+          >
+          <span
+            class="lang-badge bg-white/80 px-2 py-0.5 rounded-full text-[11px] sm:text-xs shadow-sm"
+            >🇮🇹 Italian</span
+          >
+          <span
+            class="lang-badge bg-white/80 px-2 py-0.5 rounded-full text-[11px] sm:text-xs shadow-sm"
+            >🇨🇳 Chinese</span
+          >
+          <span
+            class="lang-badge bg-white/80 px-2 py-0.5 rounded-full text-[11px] sm:text-xs shadow-sm"
+            >🇯🇵 Japanese</span
+          >
+          <span
+            class="lang-badge bg-white/80 px-2 py-0.5 rounded-full text-[11px] sm:text-xs shadow-sm"
+            >+30 more</span
+          >
+        </div>
+      </div>
+
+      <!-- Chat Area -->
+      <div
+        id="chat-area"
+        class="flex-1 p-3 sm:p-5 overflow-y-auto space-y-3 sm:space-y-4 bg-gray-50/90"
+      ></div>
+
+      <!-- Error Message Area -->
+      <div
+        id="error-message"
+        class="text-xs sm:text-sm text-rose-600 px-4 sm:px-5 pt-1 font-medium hidden flex items-center gap-2 bg-rose-50/80 mx-3 sm:mx-0 rounded-md"
+      >
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span id="error-text"></span>
+      </div>
+
+      <!-- Input Area -->
+      <div class="p-3 sm:p-5 bg-white border-t border-gray-200 space-y-3">
+        <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <div class="flex-1 relative">
+            <textarea
+              id="input-text"
+              class="w-full p-3 sm:p-4 pr-10 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 transition-all resize-none text-sm sm:text-base placeholder:text-xs sm:placeholder:text-base"
+              rows="1"
+              placeholder="Type or paste text in ANY language... (Enter to send)"
+            ></textarea>
+            <button
+              id="clear-btn"
+              class="absolute right-2 sm:right-3 bottom-3 sm:bottom-4 text-gray-400 hover:text-gray-600 transition text-sm"
+              title="Clear input"
+            >
+              <i class="fa-solid fa-times-circle"></i>
+            </button>
+          </div>
+          <button
+            id="send-btn"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 sm:px-7 py-3 sm:py-4 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 text-sm sm:text-base"
+          >
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Send</span>
+          </button>
         </div>
 
-        <!-- Language Stats Bar -->
-        <div class="bg-indigo-50 px-6 py-2 border-b border-indigo-100 flex flex-wrap items-center gap-3 text-sm">
-            <i class="fa-solid fa-magic text-indigo-500"></i>
-            <span class="text-indigo-700 font-medium">Auto-detects:</span>
-            <div class="flex flex-wrap gap-1">
-                <span class="lang-badge bg-white px-2 py-0.5 rounded-full text-xs shadow-sm">🇺🇸 English</span>
-                <span class="lang-badge bg-white px-2 py-0.5 rounded-full text-xs shadow-sm">🇪🇸 Spanish</span>
-                <span class="lang-badge bg-white px-2 py-0.5 rounded-full text-xs shadow-sm">🇫🇷 French</span>
-                <span class="lang-badge bg-white px-2 py-0.5 rounded-full text-xs shadow-sm">🇩🇪 German</span>
-                <span class="lang-badge bg-white px-2 py-0.5 rounded-full text-xs shadow-sm">🇮🇹 Italian</span>
-                <span class="lang-badge bg-white px-2 py-0.5 rounded-full text-xs shadow-sm">+32 more</span>
-            </div>
+        <!-- Feature Tags -->
+        <div class="flex flex-wrap gap-1.5 sm:gap-2 text-[11px] sm:text-xs">
+          <span
+            class="bg-indigo-50 text-indigo-700 px-2.5 sm:px-3 py-1.5 rounded-full flex items-center gap-1"
+          >
+            <i
+              class="fa-solid fa-check-circle text-indigo-500 text-[10px] sm:text-xs"
+            ></i>
+            Advanced Language Detection
+          </span>
+          <span
+            class="bg-indigo-50 text-indigo-700 px-2.5 sm:px-3 py-1.5 rounded-full flex items-center gap-1"
+          >
+            <i class="fa-solid fa-arrows-spin"></i> 37+ Language Translation
+          </span>
+          <span
+            class="bg-indigo-50 text-indigo-700 px-2.5 sm:px-3 py-1.5 rounded-full flex items-center gap-1"
+          >
+            <i class="fa-solid fa-chart-simple"></i> Smart Summarization
+          </span>
         </div>
-
-        <!-- Chat Area -->
-        <div id="chat-area" class="flex-1 p-5 overflow-y-auto space-y-4 bg-gray-50/80"></div>
-
-        <!-- Error Message Area -->
-        <div id="error-message" class="text-sm text-rose-600 px-5 pt-2 font-medium hidden flex items-center gap-2">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <span id="error-text"></span>
-        </div>
-
-        <!-- Input Area -->
-        <div class="p-5 bg-white border-t border-gray-200 space-y-3">
-            <div class="flex items-end gap-2">
-                <div class="flex-1 relative">
-                    <textarea id="input-text"
-                              class="w-full p-4 pr-12 rounded-xl border border-gray-300 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all resize-none max-h-32"
-                              rows="1"
-                              placeholder="Type in any language... (Enter to send, Shift+Enter for new line)"></textarea>
-                    <button id="clear-btn" class="absolute right-3 bottom-4 text-gray-400 hover:text-gray-600 transition" title="Clear input">
-                        <i class="fa-solid fa-times"></i>
-                    </button>
-                </div>
-                <button id="send-btn" class="h-fit bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-4 rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2">
-                    <i class="fa-solid fa-paper-plane"></i>
-                    <span>Send</span>
-                </button>
-            </div>
-            
-            <!-- Feature Tags -->
-            <div class="flex flex-wrap gap-2 text-xs">
-                <span class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full flex items-center gap-1">
-                    <i class="fa-solid fa-check-circle text-indigo-500"></i> 37+ Language Detection
-                </span>
-                <span class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full flex items-center gap-1">
-                    <i class="fa-solid fa-arrows-spin"></i> Bi-directional Translation
-                </span>
-                <span class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full flex items-center gap-1">
-                    <i class="fa-solid fa-chart-simple"></i> Smart Summarization
-                </span>
-            </div>
-        </div>
+      </div>
     </div>
 
     <script>
-document.addEventListener("DOMContentLoaded", () => {
-    // --- DOM Elements ---
-    const inputText = document.getElementById("input-text");
-    const sendBtn = document.getElementById("send-btn");
-    const chatArea = document.getElementById("chat-area");
-    const errorDiv = document.getElementById("error-message");
-    const errorText = document.getElementById("error-text");
-    const clearInputBtn = document.getElementById("clear-btn");
+      document.addEventListener("DOMContentLoaded", () => {
+        // DOM Elements
+        const inputText = document.getElementById("input-text");
+        const sendBtn = document.getElementById("send-btn");
+        const chatArea = document.getElementById("chat-area");
+        const errorDiv = document.getElementById("error-message");
+        const errorText = document.getElementById("error-text");
+        const clearInputBtn = document.getElementById("clear-btn");
 
-    // --- State & Constants ---
-    let isProcessing = false;
-    const MAX_MESSAGES = 50;
+        let isProcessing = false;
+        const MAX_MESSAGES = 50;
 
-    // --- Complete Language Database (37+ languages) ---
-    const LANGUAGES = {
-        'en': { name: 'English', flag: '🇺🇸', native: 'English' },
-        'es': { name: 'Spanish', flag: '🇪🇸', native: 'Español' },
-        'fr': { name: 'French', flag: '🇫🇷', native: 'Français' },
-        'de': { name: 'German', flag: '🇩🇪', native: 'Deutsch' },
-        'it': { name: 'Italian', flag: '🇮🇹', native: 'Italiano' },
-        'pt': { name: 'Portuguese', flag: '🇵🇹', native: 'Português' },
-        'ru': { name: 'Russian', flag: '🇷🇺', native: 'Русский' },
-        'ja': { name: 'Japanese', flag: '🇯🇵', native: '日本語' },
-        'ko': { name: 'Korean', flag: '🇰🇷', native: '한국어' },
-        'zh': { name: 'Chinese', flag: '🇨🇳', native: '中文' },
-        'ar': { name: 'Arabic', flag: '🇸🇦', native: 'العربية' },
-        'hi': { name: 'Hindi', flag: '🇮🇳', native: 'हिन्दी' },
-        'nl': { name: 'Dutch', flag: '🇳🇱', native: 'Nederlands' },
-        'pl': { name: 'Polish', flag: '🇵🇱', native: 'Polski' },
-        'uk': { name: 'Ukrainian', flag: '🇺🇦', native: 'Українська' },
-        'el': { name: 'Greek', flag: '🇬🇷', native: 'Ελληνικά' },
-        'cs': { name: 'Czech', flag: '🇨🇿', native: 'Čeština' },
-        'sv': { name: 'Swedish', flag: '🇸🇪', native: 'Svenska' },
-        'da': { name: 'Danish', flag: '🇩🇰', native: 'Dansk' },
-        'fi': { name: 'Finnish', flag: '🇫🇮', native: 'Suomi' },
-        'no': { name: 'Norwegian', flag: '🇳🇴', native: 'Norsk' },
-        'hu': { name: 'Hungarian', flag: '🇭🇺', native: 'Magyar' },
-        'ro': { name: 'Romanian', flag: '🇷🇴', native: 'Română' },
-        'bg': { name: 'Bulgarian', flag: '🇧🇬', native: 'Български' },
-        'sr': { name: 'Serbian', flag: '🇷🇸', native: 'Српски' },
-        'hr': { name: 'Croatian', flag: '🇭🇷', native: 'Hrvatski' },
-        'sk': { name: 'Slovak', flag: '🇸🇰', native: 'Slovenčina' },
-        'sl': { name: 'Slovenian', flag: '🇸🇮', native: 'Slovenščina' },
-        'th': { name: 'Thai', flag: '🇹🇭', native: 'ไทย' },
-        'vi': { name: 'Vietnamese', flag: '🇻🇳', native: 'Tiếng Việt' },
-        'id': { name: 'Indonesian', flag: '🇮🇩', native: 'Bahasa Indonesia' },
-        'ms': { name: 'Malay', flag: '🇲🇾', native: 'Bahasa Melayu' },
-        'tl': { name: 'Tagalog', flag: '🇵🇭', native: 'Tagalog' },
-        'tr': { name: 'Turkish', flag: '🇹🇷', native: 'Türkçe' },
-        'fa': { name: 'Persian', flag: '🇮🇷', native: 'فارسی' },
-        'ur': { name: 'Urdu', flag: '🇵🇰', native: 'اردو' },
-        'he': { name: 'Hebrew', flag: '🇮🇱', native: 'עברית' }
-    };
+        // Complete Language Database
+        const LANGUAGES = {
+          zh: { name: "Chinese", flag: "🇨🇳", native: "中文", scripts: ["cjk"] },
+          ja: {
+            name: "Japanese",
+            flag: "🇯🇵",
+            native: "日本語",
+            scripts: ["cjk"],
+          },
+          ko: {
+            name: "Korean",
+            flag: "🇰🇷",
+            native: "한국어",
+            scripts: ["hangul"],
+          },
+          ru: {
+            name: "Russian",
+            flag: "🇷🇺",
+            native: "Русский",
+            scripts: ["cyrillic"],
+          },
+          uk: {
+            name: "Ukrainian",
+            flag: "🇺🇦",
+            native: "Українська",
+            scripts: ["cyrillic"],
+          },
+          bg: {
+            name: "Bulgarian",
+            flag: "🇧🇬",
+            native: "Български",
+            scripts: ["cyrillic"],
+          },
+          sr: {
+            name: "Serbian",
+            flag: "🇷🇸",
+            native: "Српски",
+            scripts: ["cyrillic"],
+          },
+          el: {
+            name: "Greek",
+            flag: "🇬🇷",
+            native: "Ελληνικά",
+            scripts: ["greek"],
+          },
+          ar: {
+            name: "Arabic",
+            flag: "🇸🇦",
+            native: "العربية",
+            scripts: ["arabic"],
+          },
+          he: {
+            name: "Hebrew",
+            flag: "🇮🇱",
+            native: "עברית",
+            scripts: ["hebrew"],
+          },
+          th: { name: "Thai", flag: "🇹🇭", native: "ไทย", scripts: ["thai"] },
+          hi: {
+            name: "Hindi",
+            flag: "🇮🇳",
+            native: "हिन्दी",
+            scripts: ["devanagari"],
+          },
+          ur: { name: "Urdu", flag: "🇵🇰", native: "اردو", scripts: ["arabic"] },
+          fa: {
+            name: "Persian",
+            flag: "🇮🇷",
+            native: "فارسی",
+            scripts: ["arabic"],
+          },
+          en: {
+            name: "English",
+            flag: "🇺🇸",
+            native: "English",
+            scripts: ["latin"],
+          },
+          es: {
+            name: "Spanish",
+            flag: "🇪🇸",
+            native: "Español",
+            scripts: ["latin"],
+          },
+          fr: {
+            name: "French",
+            flag: "🇫🇷",
+            native: "Français",
+            scripts: ["latin"],
+          },
+          de: {
+            name: "German",
+            flag: "🇩🇪",
+            native: "Deutsch",
+            scripts: ["latin"],
+          },
+          it: {
+            name: "Italian",
+            flag: "🇮🇹",
+            native: "Italiano",
+            scripts: ["latin"],
+          },
+          pt: {
+            name: "Portuguese",
+            flag: "🇵🇹",
+            native: "Português",
+            scripts: ["latin"],
+          },
+          nl: {
+            name: "Dutch",
+            flag: "🇳🇱",
+            native: "Nederlands",
+            scripts: ["latin"],
+          },
+          pl: {
+            name: "Polish",
+            flag: "🇵🇱",
+            native: "Polski",
+            scripts: ["latin"],
+          },
+          sv: {
+            name: "Swedish",
+            flag: "🇸🇪",
+            native: "Svenska",
+            scripts: ["latin"],
+          },
+          da: {
+            name: "Danish",
+            flag: "🇩🇰",
+            native: "Dansk",
+            scripts: ["latin"],
+          },
+          no: {
+            name: "Norwegian",
+            flag: "🇳🇴",
+            native: "Norsk",
+            scripts: ["latin"],
+          },
+          fi: {
+            name: "Finnish",
+            flag: "🇫🇮",
+            native: "Suomi",
+            scripts: ["latin"],
+          },
+          hu: {
+            name: "Hungarian",
+            flag: "🇭🇺",
+            native: "Magyar",
+            scripts: ["latin"],
+          },
+          cs: {
+            name: "Czech",
+            flag: "🇨🇿",
+            native: "Čeština",
+            scripts: ["latin"],
+          },
+          sk: {
+            name: "Slovak",
+            flag: "🇸🇰",
+            native: "Slovenčina",
+            scripts: ["latin"],
+          },
+          ro: {
+            name: "Romanian",
+            flag: "🇷🇴",
+            native: "Română",
+            scripts: ["latin"],
+          },
+          hr: {
+            name: "Croatian",
+            flag: "🇭🇷",
+            native: "Hrvatski",
+            scripts: ["latin"],
+          },
+          sl: {
+            name: "Slovenian",
+            flag: "🇸🇮",
+            native: "Slovenščina",
+            scripts: ["latin"],
+          },
+          vi: {
+            name: "Vietnamese",
+            flag: "🇻🇳",
+            native: "Tiếng Việt",
+            scripts: ["latin"],
+          },
+          id: {
+            name: "Indonesian",
+            flag: "🇮🇩",
+            native: "Bahasa Indonesia",
+            scripts: ["latin"],
+          },
+          ms: {
+            name: "Malay",
+            flag: "🇲🇾",
+            native: "Bahasa Melayu",
+            scripts: ["latin"],
+          },
+          tr: {
+            name: "Turkish",
+            flag: "🇹🇷",
+            native: "Türkçe",
+            scripts: ["latin"],
+          },
+        };
 
-    // Sort languages for dropdown
-    const SORTED_LANGUAGES = Object.entries(LANGUAGES)
-        .sort(([, a], [, b]) => a.name.localeCompare(b.name))
-        .map(([code, data]) => ({ code, ...data }));
+        // Unicode ranges for script detection
+        function detectScript(text) {
+          const codePoints = Array.from(text).map((c) => c.codePointAt(0) || 0);
 
-    // --- Welcome Message ---
-    const welcomeMessage = `👋 **Welcome to LinguaFlow Pro!**\n\nI can detect and translate between **${Object.keys(LANGUAGES).length}+ languages**. Try sending me text in any of these languages:\n\n` +
-        Object.entries(LANGUAGES).slice(0, 10).map(([code, lang]) => `${lang.flag} ${lang.name}`).join(' · ') + 
-        `\n\n✨ **Features:**\n• 🔍 Automatic language detection\n• 🌐 Translate to any of ${Object.keys(LANGUAGES).length} languages\n• 📝 Smart summarization for English text (150+ chars)\n• 🎯 Real-time language identification`;
-    
-    appendMessage("AI", welcomeMessage, "bg-indigo-50 text-gray-800", "ai");
+          // Check for CJK (Chinese/Japanese/Korean)
+          const hasCJK = codePoints.some(
+            (cp) =>
+              (cp >= 0x4e00 && cp <= 0x9fff) || // CJK Unified Ideographs
+              (cp >= 0x3400 && cp <= 0x4dbf) || // CJK Extension A
+              (cp >= 0x20000 && cp <= 0x2a6df),
+          ); // CJK Extension B
+          if (hasCJK) return "cjk";
 
-    // --- Event Listeners ---
-    sendBtn.addEventListener("click", processText);
-    
-    inputText.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault();
-            processText();
+          // Check Hiragana/Katakana (Japanese specific)
+          const hasJapanese = codePoints.some(
+            (cp) =>
+              (cp >= 0x3040 && cp <= 0x309f) || // Hiragana
+              (cp >= 0x30a0 && cp <= 0x30ff),
+          ); // Katakana
+          if (hasJapanese) return "japanese";
+
+          // Check Hangul (Korean)
+          const hasHangul = codePoints.some(
+            (cp) =>
+              (cp >= 0xac00 && cp <= 0xd7af) || // Hangul syllables
+              (cp >= 0x1100 && cp <= 0x11ff),
+          ); // Hangul Jamo
+          if (hasHangul) return "hangul";
+
+          // Cyrillic
+          const hasCyrillic = codePoints.some(
+            (cp) =>
+              (cp >= 0x0400 && cp <= 0x04ff) || (cp >= 0x0500 && cp <= 0x052f),
+          );
+          if (hasCyrillic) return "cyrillic";
+
+          // Greek
+          const hasGreek = codePoints.some(
+            (cp) => cp >= 0x0370 && cp <= 0x03ff,
+          );
+          if (hasGreek) return "greek";
+
+          // Arabic
+          const hasArabic = codePoints.some(
+            (cp) =>
+              (cp >= 0x0600 && cp <= 0x06ff) || (cp >= 0x0750 && cp <= 0x077f),
+          );
+          if (hasArabic) return "arabic";
+
+          // Hebrew
+          const hasHebrew = codePoints.some(
+            (cp) => cp >= 0x0590 && cp <= 0x05ff,
+          );
+          if (hasHebrew) return "hebrew";
+
+          // Thai
+          const hasThai = codePoints.some((cp) => cp >= 0x0e00 && cp <= 0x0e7f);
+          if (hasThai) return "thai";
+
+          // Devanagari (Hindi, etc)
+          const hasDevanagari = codePoints.some(
+            (cp) => cp >= 0x0900 && cp <= 0x097f,
+          );
+          if (hasDevanagari) return "devanagari";
+
+          return "latin";
         }
-    });
-    
-    clearInputBtn?.addEventListener("click", () => {
-        inputText.value = "";
-        inputText.focus();
-        hideError();
-    });
 
-    // --- Core Processing ---
-    async function processText() {
-        const text = inputText.value.trim();
+        // Enhanced language detection with script analysis
+        async function detectLanguageWithConfidence(text) {
+          const script = detectScript(text);
+          const textSample = text.slice(0, 300);
 
-        if (!text) {
-            showError("Please enter some text to process");
-            return;
+          // First try script-based detection for non-Latin scripts
+          if (script === "cjk") {
+            // Distinguish Chinese from Japanese
+            const hasHiraganaKatakana = /[\u3040-\u309F\u30A0-\u30FF]/.test(
+              text,
+            );
+            if (hasHiraganaKatakana) {
+              return { code: "ja", confidence: 92, method: "script" };
+            }
+            // Check for Korean mixed in CJK
+            const hasHangul = /[\uAC00-\uD7AF]/.test(text);
+            if (hasHangul) {
+              return { code: "ko", confidence: 90, method: "script" };
+            }
+            return { code: "zh", confidence: 95, method: "script" };
+          }
+
+          if (script === "japanese") {
+            return { code: "ja", confidence: 96, method: "script" };
+          }
+
+          if (script === "hangul") {
+            return { code: "ko", confidence: 96, method: "script" };
+          }
+
+          if (script === "cyrillic") {
+            // Russian, Ukrainian, Bulgarian, Serbian - use API for accuracy
+            return await apiLanguageDetection(textSample);
+          }
+
+          if (script === "greek") {
+            return { code: "el", confidence: 94, method: "script" };
+          }
+
+          if (script === "arabic") {
+            // Arabic, Persian, Urdu - API will distinguish
+            return await apiLanguageDetection(textSample);
+          }
+
+          if (script === "hebrew") {
+            return { code: "he", confidence: 95, method: "script" };
+          }
+
+          if (script === "thai") {
+            return { code: "th", confidence: 97, method: "script" };
+          }
+
+          if (script === "devanagari") {
+            return { code: "hi", confidence: 93, method: "script" };
+          }
+
+          // For Latin script, use Google Translate API with improved parsing
+          return await apiLanguageDetection(textSample);
         }
-        
-        if (isProcessing) {
-            showError("Still processing your previous request...");
-            return;
-        }
 
-        hideError();
-        isProcessing = true;
-        sendBtn.disabled = true;
-        sendBtn.classList.add("opacity-50", "cursor-not-waiting");
+        // API-based detection with proper response parsing
+        async function apiLanguageDetection(text) {
+          const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&dt=ld&q=${encodeURIComponent(text)}`;
 
-        appendMessage("You", text, "bg-indigo-100 text-gray-800", "user");
-        inputText.value = "";
-        inputText.style.height = "auto";
+          try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error();
+            const data = await response.json();
 
-        const typingId = showTypingIndicator();
+            // Parse language from response - data[2] contains the detected language code
+            let langCode = data[2] || "en";
 
-        try {
-            const detection = await detectLanguageWithConfidence(text);
-            
-            removeTypingIndicator(typingId);
-
-            const detectedLang = LANGUAGES[detection.code] || { 
-                name: detection.code, 
-                flag: '🌐', 
-                native: detection.code 
+            // Map Google's language codes to our standard
+            const codeMap = {
+              "zh-CN": "zh",
+              "zh-TW": "zh",
+              "zh-HK": "zh",
+              "pt-PT": "pt",
+              "pt-BR": "pt",
+              in: "id", // Indonesian
+              iw: "he", // Hebrew
+              jw: "jv", // Javanese (not in our list)
+              "ko-KP": "ko",
+              "ko-KR": "ko",
             };
-            
-            let confidenceDisplay = '';
-            if (detection.confidence !== null && !isNaN(detection.confidence)) {
-                confidenceDisplay = `· ${detection.confidence}%`;
-            }
-            
-            appendMessage("AI", 
-                `🔍 **Language Detection Result**\n\n` +
-                `${detectedLang.flag} **${detectedLang.name}**\n` +
-                `📝 Native: ${detectedLang.native || detectedLang.name}\n` +
-                `🎯 Code: \`${detection.code}\` ${confidenceDisplay}`, 
-                "bg-gray-100 text-gray-800", "ai");
 
-            const actions = await createEnhancedActionButtons(text, detection.code);
-            if (actions) {
-                chatArea.appendChild(actions);
+            langCode = codeMap[langCode] || langCode;
+
+            // Extract confidence if available
+            let confidence = null;
+            if (data[8] && data[8][0] && data[8][0][0] !== undefined) {
+              let rawConf = parseFloat(data[8][0][0]);
+              if (!isNaN(rawConf) && rawConf > 0) {
+                confidence = Math.min(99, Math.round(rawConf * 100));
+              }
             }
 
-        } catch (error) {
-            console.error("Processing error:", error);
+            // If confidence is low but we have a valid language, still use it
+            if (!confidence && langCode && LANGUAGES[langCode]) {
+              confidence = 85; // Default confidence for API detection
+            }
+
+            return {
+              code: langCode,
+              confidence: confidence || 75,
+              method: "api",
+            };
+          } catch (error) {
+            console.warn("API detection failed:", error);
+            return { code: "en", confidence: 50, method: "fallback" };
+          }
+        }
+
+        async function getEnhancedTranslation(
+          text,
+          targetCode,
+          sourceCode = "auto",
+        ) {
+          const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceCode}&tl=${targetCode}&dt=t&q=${encodeURIComponent(text)}`;
+          try {
+            const resp = await fetch(url);
+            if (!resp.ok) throw new Error();
+            const data = await resp.json();
+            const translation = data[0].map((item) => item[0]).join(" ");
+            const detectedSource = data[2] || sourceCode;
+            return {
+              text: translation,
+              sourceLang: detectedSource,
+              targetLang: targetCode,
+            };
+          } catch (err) {
+            return {
+              text: "❌ Translation temporarily unavailable",
+              sourceLang: "unknown",
+              targetLang: targetCode,
+            };
+          }
+        }
+
+        // Sorted languages for dropdown
+        const SORTED_LANGUAGES = Object.entries(LANGUAGES)
+          .sort(([, a], [, b]) => a.name.localeCompare(b.name))
+          .map(([code, data]) => ({ code, ...data }));
+
+        // Welcome message
+        const welcomeMsg = `👋 **Welcome to LinguaFlow Pro!**\n\nI now feature **advanced language detection** that accurately identifies Chinese, Japanese, Korean, Arabic, Russian, and 30+ other languages with high precision.\n\n✨ **Try it:**\n• Paste Chinese text → detects as Chinese 🇨🇳\n• Paste Japanese → detects as Japanese 🇯🇵\n• Paste Korean → detects as Korean 🇰🇷\n\n🌐 **Translate** to any of ${Object.keys(LANGUAGES).length} languages with one click!`;
+
+        appendMessage("AI", welcomeMsg, "bg-indigo-50 text-gray-800", "ai");
+
+        // Event listeners
+        sendBtn.addEventListener("click", processText);
+        inputText.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            processText();
+          }
+        });
+        clearInputBtn?.addEventListener("click", () => {
+          inputText.value = "";
+          inputText.style.height = "auto";
+          inputText.focus();
+          hideError();
+        });
+
+        inputText.addEventListener("input", function () {
+          this.style.height = "auto";
+          this.style.height = Math.min(this.scrollHeight, 120) + "px";
+        });
+
+        async function processText() {
+          const text = inputText.value.trim();
+          if (!text) {
+            showError("Please enter some text to translate or analyze");
+            return;
+          }
+          if (isProcessing) {
+            showError("Still processing previous request...");
+            return;
+          }
+
+          hideError();
+          isProcessing = true;
+          sendBtn.disabled = true;
+          sendBtn.classList.add("opacity-50", "cursor-not-allowed");
+
+          appendMessage("You", text, "bg-indigo-100 text-gray-800", "user");
+          inputText.value = "";
+          inputText.style.height = "auto";
+
+          const typingId = showTypingIndicator();
+
+          try {
+            const detection = await detectLanguageWithConfidence(text);
             removeTypingIndicator(typingId);
-            appendMessage("AI", "😵 Sorry, I encountered an error. Please try again.", "bg-red-50 text-red-800", "ai");
-        } finally {
+
+            const detectedLang = LANGUAGES[detection.code] || {
+              name: detection.code.toUpperCase(),
+              flag: "🌐",
+              native: detection.code,
+            };
+            const methodEmoji =
+              detection.method === "script"
+                ? "🎯"
+                : detection.method === "api"
+                  ? "🌐"
+                  : "⚡";
+            const confidenceText = detection.confidence
+              ? ` · ${detection.confidence}% confidence`
+              : "";
+
+            appendMessage(
+              "AI",
+              `${methodEmoji} **Language Detection**\n${detectedLang.flag} **${detectedLang.name}** (${detectedLang.native})\n\`${detection.code}\`${confidenceText}\n${detection.method === "script" ? "✓ Script-based detection" : "✓ AI-powered detection"}`,
+              "bg-gray-100 text-gray-800",
+              "ai",
+            );
+
+            const actions = await createResponsiveActionPanel(
+              text,
+              detection.code,
+            );
+            if (actions) {
+              chatArea.appendChild(actions);
+              chatArea.scrollTop = chatArea.scrollHeight;
+            }
+          } catch (err) {
+            console.error(err);
+            removeTypingIndicator(typingId);
+            appendMessage(
+              "AI",
+              "⚠️ Network error. Please try again later.",
+              "bg-red-50 text-red-700",
+              "ai",
+            );
+          } finally {
             isProcessing = false;
             sendBtn.disabled = false;
-            sendBtn.classList.remove("opacity-50", "cursor-not-waiting");
+            sendBtn.classList.remove("opacity-50", "cursor-not-allowed");
+          }
+          cleanupOldMessages();
+          chatArea.scrollTop = chatArea.scrollHeight;
         }
 
-        cleanupOldMessages();
-        chatArea.scrollTop = chatArea.scrollHeight;
-    }
+        async function createResponsiveActionPanel(originalText, detectedCode) {
+          const container = document.createElement("div");
+          container.className = "flex flex-col gap-3 ml-2 sm:ml-6 mt-2 mb-1";
 
-    // --- Language Detection ---
-    async function detectLanguageWithConfidence(text) {
-        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&dt=ld&q=${encodeURIComponent(text)}`;
-        
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const data = await response.json();
-            
-            let langCode = data[2] || 'en';
-            let confidence = null;
-            
-            // Try to get confidence
-            if (data[8] && data[8][0] && data[8][0][0] !== undefined) {
-                const rawConfidence = parseFloat(data[8][0][0]);
-                if (!isNaN(rawConfidence) && rawConfidence > 0) {
-                    confidence = Math.min(100, Math.round(rawConfidence * 100));
-                }
-            }
-            
-            // Map language codes
-            const langMap = {
-                'zh-CN': 'zh',
-                'zh-TW': 'zh',
-                'pt-PT': 'pt',
-                'pt-BR': 'pt'
-            };
-            
-            langCode = langMap[langCode] || langCode;
-            
-            return { code: langCode, confidence };
-            
-        } catch (error) {
-            console.warn("Language detection failed:", error);
-            return { code: 'en', confidence: null };
-        }
-    }
-
-    // --- Translation ---
-    async function getEnhancedTranslation(text, targetCode, sourceCode = 'auto') {
-        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceCode}&tl=${targetCode}&dt=t&q=${encodeURIComponent(text)}`;
-        
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const data = await response.json();
-            
-            const translation = data[0].map(item => item[0]).join(" ");
-            const detectedSource = data[2] || sourceCode;
-            
-            return {
-                text: translation,
-                sourceLang: detectedSource,
-                targetLang: targetCode
-            };
-            
-        } catch (error) {
-            console.error("Translation error:", error);
-            return {
-                text: "⚠️ Translation unavailable",
-                sourceLang: 'unknown',
-                targetLang: targetCode
-            };
-        }
-    }
-
-    // --- UI Helpers ---
-    function showError(message) {
-        errorText.textContent = message;
-        errorDiv.classList.remove("hidden");
-        setTimeout(hideError, 4000);
-    }
-
-    function hideError() {
-        errorDiv.classList.add("hidden");
-        errorText.textContent = "";
-    }
-
-    function appendMessage(sender, text, bgColor, senderType = "user") {
-        const messageDiv = document.createElement("div");
-        messageDiv.className = `flex ${senderType === 'user' ? 'justify-end' : 'justify-start'} mb-3`;
-        
-        const bubble = document.createElement("div");
-        
-        let formattedText = text
-            .replace(/\`(.*?)\`/g, '<code class="bg-gray-200 px-1.5 py-0.5 rounded text-sm font-mono">$1</code>')
-            .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
-            .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
-            .replace(/\n/g, '<br>');
-        
-        bubble.innerHTML = formattedText;
-        bubble.className = `p-4 rounded-2xl max-w-[80%] shadow-sm ${bgColor} ${senderType === 'user' ? 'rounded-br-none' : 'rounded-bl-none'}`;
-        
-        messageDiv.appendChild(bubble);
-        chatArea.appendChild(messageDiv);
-        chatArea.scrollTop = chatArea.scrollHeight;
-    }
-
-    function showTypingIndicator() {
-        const id = 'typing-' + Date.now();
-        const indicator = document.createElement("div");
-        indicator.id = id;
-        indicator.className = "flex justify-start";
-        indicator.innerHTML = `
-            <div class="bg-gray-100 text-gray-500 p-4 rounded-2xl rounded-bl-none flex items-center gap-2">
-                <div class="flex gap-1">
-                    <span class="typing-dot"></span>
-                    <span class="typing-dot"></span>
-                    <span class="typing-dot"></span>
+          const transCard = document.createElement("div");
+          transCard.className =
+            "bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden w-full";
+          transCard.innerHTML = `
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-3 sm:px-4 py-2 border-b border-gray-200 flex items-center gap-2">
+                <i class="fa-solid fa-language text-indigo-500 text-sm"></i>
+                <span class="font-semibold text-xs sm:text-sm">Translate to any language</span>
+            </div>
+            <div class="p-3 sm:p-4 space-y-3">
+                <div class="flex flex-wrap gap-1.5 sm:gap-2 quick-lang-row" id="quick-lang-row-${Date.now()}"></div>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <select id="full-lang-select" class="flex-1 p-2.5 text-sm rounded-lg border border-gray-300 focus:border-indigo-400 bg-white text-gray-700"></select>
+                    <button id="full-translate-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2 shadow-sm">Translate</button>
                 </div>
-                <span class="text-sm">AI is thinking...</span>
-            </div>`;
-        chatArea.appendChild(indicator);
-        chatArea.scrollTop = chatArea.scrollHeight;
-        return id;
-    }
-
-    function removeTypingIndicator(id) {
-        document.getElementById(id)?.remove();
-    }
-
-    function cleanupOldMessages() {
-        const messages = chatArea.querySelectorAll('div.flex');
-        if (messages.length > MAX_MESSAGES) {
-            for (let i = 0; i < messages.length - MAX_MESSAGES; i++) {
-                messages[i]?.remove();
-            }
-        }
-    }
-
-    // --- Action Buttons Creator ---
-    async function createEnhancedActionButtons(originalText, detectedCode) {
-        const container = document.createElement("div");
-        container.className = "flex flex-col gap-3 ml-6 mt-2";
-
-        // Translation Section
-        const translateSection = document.createElement("div");
-        translateSection.className = "bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden";
-
-        const header = document.createElement("div");
-        header.className = "bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center gap-2";
-        header.innerHTML = `
-            <i class="fa-solid fa-language text-indigo-500"></i>
-            <span class="font-medium text-sm">Translate to (${Object.keys(LANGUAGES).length} languages available)</span>
+            </div>
         `;
-        translateSection.appendChild(header);
 
-        const selectorDiv = document.createElement("div");
-        selectorDiv.className = "p-3";
-
-        // Quick language row
-        const quickRow = document.createElement("div");
-        quickRow.className = "flex flex-wrap gap-1 mb-3 pb-2 border-b border-gray-100";
-        const popularCodes = ['es', 'fr', 'de', 'it', 'pt', 'ru', 'ja', 'ko', 'zh', 'ar'];
-        
-        popularCodes.forEach(code => {
-            if (LANGUAGES[code] && code !== detectedCode) {
+          const quickContainer = transCard.querySelector(".quick-lang-row");
+          const popular = [
+            "es",
+            "fr",
+            "de",
+            "it",
+            "pt",
+            "ja",
+            "ko",
+            "zh",
+            "ru",
+            "ar",
+          ];
+          if (quickContainer) {
+            popular.forEach((code) => {
+              if (LANGUAGES[code] && code !== detectedCode) {
                 const btn = document.createElement("button");
-                btn.className = "quick-lang-btn px-2 py-1 text-xs bg-gray-100 hover:bg-indigo-100 rounded-full transition-colors flex items-center gap-1";
+                btn.className =
+                  "quick-lang-btn px-2 sm:px-3 py-1.5 text-[11px] sm:text-xs bg-gray-100 hover:bg-indigo-100 rounded-full transition flex items-center gap-1";
                 btn.innerHTML = `${LANGUAGES[code].flag} ${LANGUAGES[code].name}`;
-                btn.addEventListener('click', async () => {
-                    btn.disabled = true;
-                    btn.innerHTML = `${LANGUAGES[code].flag} Translating...`;
-                    
-                    const translation = await getEnhancedTranslation(originalText, code, detectedCode);
-                    
-                    appendMessage("AI", 
-                        `${LANGUAGES[code].flag} **${LANGUAGES[code].name} Translation:**\n\n${translation.text}`, 
-                        "bg-indigo-50 text-gray-800", "ai");
-                    
-                    btn.disabled = false;
-                    btn.innerHTML = `${LANGUAGES[code].flag} ${LANGUAGES[code].name}`;
+                btn.addEventListener("click", async (e) => {
+                  e.preventDefault();
+                  btn.disabled = true;
+                  btn.innerHTML = `${LANGUAGES[code].flag} ...`;
+                  const translation = await getEnhancedTranslation(
+                    originalText,
+                    code,
+                    detectedCode,
+                  );
+                  appendMessage(
+                    "AI",
+                    `${LANGUAGES[code].flag} **${LANGUAGES[code].name}:**\n\n${translation.text}`,
+                    "bg-indigo-50 text-gray-800",
+                    "ai",
+                  );
+                  btn.disabled = false;
+                  btn.innerHTML = `${LANGUAGES[code].flag} ${LANGUAGES[code].name}`;
                 });
-                quickRow.appendChild(btn);
-            }
-        });
-        selectorDiv.appendChild(quickRow);
-
-        // Full language dropdown
-        const selectWrapper = document.createElement("div");
-        selectWrapper.className = "flex gap-2";
-
-        const langSelect = document.createElement("select");
-        langSelect.className = "flex-1 p-2.5 text-sm rounded-lg border border-gray-300 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 bg-white";
-        
-        // Add all languages to dropdown
-        SORTED_LANGUAGES.forEach(({code, flag, name}) => {
-            if (code === detectedCode) return;
-            const option = document.createElement("option");
-            option.value = code;
-            option.textContent = `${flag} ${name}`;
-            langSelect.appendChild(option);
-        });
-
-        const translateBtn = document.createElement("button");
-        translateBtn.className = "bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2";
-        translateBtn.innerHTML = '<i class="fa-solid fa-arrow-right"></i><span>Go</span>';
-
-        translateBtn.addEventListener('click', async () => {
-            const targetCode = langSelect.value;
-            translateBtn.disabled = true;
-            translateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Translating...</span>';
-            
-            const translation = await getEnhancedTranslation(originalText, targetCode, detectedCode);
-            const targetLang = LANGUAGES[targetCode];
-            
-            appendMessage("AI", 
-                `${targetLang.flag} **${targetLang.name} Translation:**\n\n${translation.text}`, 
-                "bg-indigo-50 text-gray-800", "ai");
-            
-            translateBtn.disabled = false;
-            translateBtn.innerHTML = '<i class="fa-solid fa-arrow-right"></i><span>Go</span>';
-        });
-
-        selectWrapper.appendChild(langSelect);
-        selectWrapper.appendChild(translateBtn);
-        selectorDiv.appendChild(selectWrapper);
-        translateSection.appendChild(selectorDiv);
-        container.appendChild(translateSection);
-
-        // Summarization (if applicable)
-        if (detectedCode === 'en' && originalText.length > 150) {
-            const summarySection = document.createElement("div");
-            summarySection.className = "bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden";
-            
-            const summaryHeader = document.createElement("div");
-            summaryHeader.className = "bg-purple-50 px-4 py-2 border-b border-purple-200 flex items-center gap-2";
-            summaryHeader.innerHTML = `
-                <i class="fa-solid fa-compress text-purple-500"></i>
-                <span class="font-medium text-sm">Text Summarization</span>
-            `;
-            summarySection.appendChild(summaryHeader);
-            
-            const summaryBody = document.createElement("div");
-            summaryBody.className = "p-3";
-            
-            const summaryBtn = document.createElement("button");
-            summaryBtn.className = "w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2";
-            summaryBtn.innerHTML = '<i class="fa-solid fa-magic"></i><span>Generate Summary</span>';
-            
-            summaryBtn.addEventListener('click', () => {
-                const summary = summarizeText(originalText);
-                appendMessage("AI", 
-                    `📝 **Summary**\n\n${summary}`, 
-                    "bg-purple-50 text-gray-800", "ai");
+                quickContainer.appendChild(btn);
+              }
             });
-            
-            summaryBody.appendChild(summaryBtn);
-            summarySection.appendChild(summaryBody);
-            container.appendChild(summarySection);
+          }
+
+          const selectLang = transCard.querySelector("#full-lang-select");
+          SORTED_LANGUAGES.forEach(({ code, flag, name }) => {
+            if (code !== detectedCode) {
+              const opt = document.createElement("option");
+              opt.value = code;
+              opt.textContent = `${flag} ${name}`;
+              selectLang.appendChild(opt);
+            }
+          });
+
+          const fullBtn = transCard.querySelector("#full-translate-btn");
+          fullBtn.addEventListener("click", async () => {
+            const target = selectLang.value;
+            fullBtn.disabled = true;
+            fullBtn.innerHTML =
+              '<i class="fa-solid fa-spinner fa-pulse"></i> Translating';
+            const translation = await getEnhancedTranslation(
+              originalText,
+              target,
+              detectedCode,
+            );
+            const targetLang = LANGUAGES[target] || {
+              flag: "🌐",
+              name: target,
+            };
+            appendMessage(
+              "AI",
+              `${targetLang.flag} **${targetLang.name} Translation:**\n\n${translation.text}`,
+              "bg-indigo-50 text-gray-800",
+              "ai",
+            );
+            fullBtn.disabled = false;
+            fullBtn.innerHTML = "Translate";
+          });
+
+          container.appendChild(transCard);
+
+          if (detectedCode === "en" && originalText.length > 150) {
+            const sumCard = document.createElement("div");
+            sumCard.className =
+              "bg-white rounded-xl border border-purple-200 shadow-sm overflow-hidden";
+            sumCard.innerHTML = `
+                <div class="bg-purple-50 px-3 sm:px-4 py-2 border-b border-purple-200 flex items-center gap-2">
+                    <i class="fa-solid fa-compress text-purple-500"></i>
+                    <span class="font-semibold text-xs sm:text-sm">Smart Summary</span>
+                </div>
+                <div class="p-3 sm:p-4">
+                    <button id="summary-action-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition shadow-sm">✨ Generate Summary</button>
+                </div>
+            `;
+            const sumBtn = sumCard.querySelector("#summary-action-btn");
+            sumBtn.addEventListener("click", () => {
+              const summary = summarizeText(originalText, 2);
+              appendMessage(
+                "AI",
+                `📝 **Concise Summary**\n\n${summary}`,
+                "bg-purple-50 text-gray-800",
+                "ai",
+              );
+            });
+            container.appendChild(sumCard);
+          }
+
+          return container;
         }
 
-        return container;
-    }
-
-    // --- Summarization ---
-    function summarizeText(text, numSentences = 2) {
-        if (!text) return "No text to summarize";
-        
-        const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
-        if (sentences.length <= numSentences) return text;
-        
-        const words = text.toLowerCase().match(/\b\w+\b/g) || [];
-        const wordFreq = {};
-        words.forEach(w => wordFreq[w] = (wordFreq[w] || 0) + 1);
-        
-        const scored = sentences.map(sentence => {
-            const sentenceWords = sentence.toLowerCase().match(/\b\w+\b/g) || [];
-            const score = sentenceWords.reduce((sum, word) => sum + (wordFreq[word] || 0), 0);
-            const positionBonus = sentences.indexOf(sentence) === 0 ? 5 : 0;
-            return { sentence: sentence.trim(), score: score + positionBonus };
-        });
-        
-        const topSentences = scored
+        function summarizeText(text, numSentences = 2) {
+          if (!text) return "No content to summarize.";
+          const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+          if (sentences.length <= numSentences) return text;
+          const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+          const freq = {};
+          words.forEach((w) => (freq[w] = (freq[w] || 0) + 1));
+          const scored = sentences.map((sent, idx) => {
+            const sentWords = sent.toLowerCase().match(/\b\w+\b/g) || [];
+            let score = sentWords.reduce((s, w) => s + (freq[w] || 0), 0);
+            if (idx === 0) score += 5;
+            return { sentence: sent.trim(), score };
+          });
+          const top = scored
             .sort((a, b) => b.score - a.score)
-            .slice(0, numSentences)
-            .sort((a, b) => sentences.indexOf(a.sentence) - sentences.indexOf(b.sentence))
-            .map(s => s.sentence);
-        
-        return topSentences.join(' ');
-    }
-});
+            .slice(0, numSentences);
+          top.sort(
+            (a, b) =>
+              sentences.indexOf(a.sentence) - sentences.indexOf(b.sentence),
+          );
+          return top.map((s) => s.sentence).join(" ");
+        }
+
+        function showError(msg) {
+          errorText.textContent = msg;
+          errorDiv.classList.remove("hidden");
+          setTimeout(() => errorDiv.classList.add("hidden"), 4000);
+        }
+        function hideError() {
+          errorDiv.classList.add("hidden");
+          errorText.textContent = "";
+        }
+
+        function appendMessage(sender, text, bgColor, senderType) {
+          const div = document.createElement("div");
+          div.className = `flex ${senderType === "user" ? "justify-end" : "justify-start"} mb-2 sm:mb-3`;
+          const bubble = document.createElement("div");
+          let formatted = text
+            .replace(
+              /\`(.*?)\`/g,
+              '<code class="bg-gray-200/80 px-1.5 py-0.5 rounded text-xs font-mono">$1</code>',
+            )
+            .replace(
+              /\*\*(.*?)\*\*/g,
+              '<strong class="font-semibold">$1</strong>',
+            )
+            .replace(/\n/g, "<br>");
+          bubble.innerHTML = formatted;
+          bubble.className = `message-bubble p-3 sm:p-4 rounded-2xl max-w-[85%] sm:max-w-[75%] shadow-sm ${bgColor} ${senderType === "user" ? "rounded-br-none" : "rounded-bl-none"} text-sm sm:text-base`;
+          div.appendChild(bubble);
+          chatArea.appendChild(div);
+          chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+          const id = "typing-" + Date.now();
+          const ind = document.createElement("div");
+          ind.id = id;
+          ind.className = "flex justify-start mb-2";
+          ind.innerHTML = `<div class="bg-gray-100 text-gray-500 p-3 sm:p-4 rounded-2xl rounded-bl-none flex items-center gap-2"><div class="flex gap-1"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div><span class="text-xs sm:text-sm">Detecting language...</span></div>`;
+          chatArea.appendChild(ind);
+          chatArea.scrollTop = chatArea.scrollHeight;
+          return id;
+        }
+        function removeTypingIndicator(id) {
+          document.getElementById(id)?.remove();
+        }
+        function cleanupOldMessages() {
+          const msgs = chatArea.querySelectorAll("div.flex");
+          if (msgs.length > MAX_MESSAGES) {
+            for (let i = 0; i < msgs.length - MAX_MESSAGES; i++)
+              msgs[i]?.remove();
+          }
+        }
+      });
     </script>
-</body>
+  </body>
 </html>
