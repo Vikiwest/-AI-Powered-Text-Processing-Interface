@@ -923,9 +923,6 @@ body.dark-mode .feature-tag {
   .input-row {
     gap: 0.6rem;
   }
-  .input-wrapper {
-    /* padding-right removed - use textarea padding instead */
-  }
   #input-text {
     padding-right: 4.5rem;
     min-height: 42px;

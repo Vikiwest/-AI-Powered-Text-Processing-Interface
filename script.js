@@ -18,6 +18,80 @@ document.addEventListener("DOMContentLoaded", () => {
   const MAX_MESSAGES = 50;
   let recognition;
 
+  /* ==================== CHAT STORAGE MANAGEMENT ==================== */
+  function saveChatHistory() {
+    try {
+      const messages = [];
+      const messageContainers = chatArea.querySelectorAll(".message-container");
+
+      messageContainers.forEach((container) => {
+        const isUser = container.classList.contains("user");
+        const bubble = container.querySelector(".message-bubble");
+        const timestamp = container.querySelector(".message-timestamp");
+
+        if (bubble && timestamp) {
+          messages.push({
+            type: isUser ? "user" : "ai",
+            text: bubble.innerHTML
+              .replace(/<br>/g, "\n")
+              .replace(/<code>/g, "`")
+              .replace(/<\/code>/g, "`")
+              .replace(/<strong>/g, "**")
+              .replace(/<\/strong>/g, "**")
+              .replace(/<em>/g, "*")
+              .replace(/<\/em>/g, "*"),
+            timestamp: timestamp.textContent,
+            rawText: bubble.textContent || bubble.innerText || "",
+          });
+        }
+      });
+
+      localStorage.setItem("linguaFlow-chatHistory", JSON.stringify(messages));
+    } catch (error) {
+      console.warn("Failed to save chat history:", error);
+    }
+  }
+
+  function loadChatHistory() {
+    try {
+      const savedHistory = localStorage.getItem("linguaFlow-chatHistory");
+      if (!savedHistory) return;
+
+      const messages = JSON.parse(savedHistory);
+      messages.forEach((message) => {
+        appendMessage(
+          message.type === "user" ? "You" : "AI",
+          message.text,
+          message.type === "user"
+            ? "bg-indigo-600 text-white"
+            : "bg-gray-100 text-gray-800",
+          message.type,
+          false, // Don't save to storage when loading
+        );
+
+        // Update timestamp if it exists
+        const containers = chatArea.querySelectorAll(".message-container");
+        const lastContainer = containers[containers.length - 1];
+        if (lastContainer) {
+          const timestamp = lastContainer.querySelector(".message-timestamp");
+          if (timestamp) {
+            timestamp.textContent = message.timestamp;
+          }
+        }
+      });
+    } catch (error) {
+      console.warn("Failed to load chat history:", error);
+    }
+  }
+
+  function clearChatHistory() {
+    try {
+      localStorage.removeItem("linguaFlow-chatHistory");
+    } catch (error) {
+      console.warn("Failed to clear chat history from storage:", error);
+    }
+  }
+
   /* ==================== COMPLETE 37+ LANGUAGE DATABASE ==================== */
   const LANGUAGES = {
     en: { name: "English", flag: "🇺🇸", native: "English" },
@@ -136,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
       `• 🎙️ Voice input (if available)\n` +
       `• 📋 Copy to clipboard`;
 
-    appendMessage("AI", welcomeText, "bg-indigo-50 text-gray-800", "ai");
+    appendMessage("AI", welcomeText, "bg-indigo-50 text-gray-800", "ai", false);
   }
 
   /* ==================== AUTO-RESIZE TEXTAREA ==================== */
@@ -189,6 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
       clearHistoryBtn.addEventListener("click", () => {
         if (confirm("Clear chat history?")) {
           chatArea.innerHTML = "";
+          clearChatHistory();
           showWelcomeMessage();
         }
       });
@@ -626,7 +701,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ==================== MESSAGE MANAGEMENT ==================== */
-  function appendMessage(sender, text, bgColor, senderType = "user") {
+  function appendMessage(
+    sender,
+    text,
+    bgColor,
+    senderType = "user",
+    saveToStorage = true,
+  ) {
     const container = document.createElement("div");
     container.className = `message-container ${senderType === "user" ? "user" : "ai"}`;
 
@@ -675,6 +756,11 @@ document.addEventListener("DOMContentLoaded", () => {
     content.appendChild(timestamp);
     container.appendChild(content);
     chatArea.appendChild(container);
+
+    // Save chat history after adding message (unless disabled)
+    if (saveToStorage) {
+      saveChatHistory();
+    }
   }
 
   function showTypingIndicator() {
@@ -725,7 +811,14 @@ document.addEventListener("DOMContentLoaded", () => {
     initTheme();
     initSpeechRecognition();
     setupEventListeners();
-    showWelcomeMessage();
+
+    // Load chat history or show welcome message
+    const savedHistory = localStorage.getItem("linguaFlow-chatHistory");
+    if (savedHistory && savedHistory !== "[]") {
+      loadChatHistory();
+    } else {
+      showWelcomeMessage();
+    }
   }
 
   init();
