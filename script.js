@@ -757,6 +757,14 @@ document.addEventListener("DOMContentLoaded", () => {
     container.appendChild(content);
     chatArea.appendChild(container);
 
+    // Scroll the new message into view so responses stay visible
+    container.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+      inline: "nearest",
+    });
+    chatArea.scrollTop = chatArea.scrollHeight;
+
     // Save chat history after adding message (unless disabled)
     if (saveToStorage) {
       saveChatHistory();
